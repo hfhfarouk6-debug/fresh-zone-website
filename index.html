@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresh Zone | فريش زون — فراخ طازة في جاردنيا سيتي</title>
+<meta name="description" content="فراخ طازة بتتفرز جوه جاردنيا سيتي، وتوصلك لباب شقتك في نفس اليوم. اطلب على واتساب.">
+<link rel="canonical" href="https://freshzonecairo.com/">
+
+<!-- Open Graph (شكل المشاركة على فيسبوك/واتساب) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:site_name" content="Fresh Zone | فريش زون">
+<meta property="og:title" content="Fresh Zone | فريش زون — فراخ طازة في جاردنيا سيتي">
+<meta property="og:description" content="فراخ طازة بتتفرز جوه جاردنيا سيتي، وتوصلك لباب شقتك في نفس اليوم.">
+<meta property="og:image" content="https://freshzonecairo.com/assets/hero.jpg">
+<meta property="og:url" content="https://freshzonecairo.com/">
+
+<!-- بيانات لجوجل يفهم بيها إن ده بزنس محلي -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Fresh Zone | فريش زون",
+  "image": "https://freshzonecairo.com/assets/hero.jpg",
+  "description": "فراخ طازة ومجمدة بتتفرز جوه جاردنيا سيتي وتوصل لباب الشقة في نفس اليوم.",
+  "telephone": "+201281517707",
+  "priceRange": "EGP",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "مدينة نصر",
+    "addressRegion": "القاهرة",
+    "addressCountry": "EG"
+  },
+  "areaServed": {
+    "@type": "Place",
+    "name": "جاردنيا سيتي، مدينة نصر، القاهرة"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 30.08,
+    "longitude": 31.34
+  },
+  "url": "https://freshzonecairo.com/",
+  "sameAs": []
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#030C13;
+    --navy-mid:#0B1A26;
+    --navy-card:#0F2033;
+    --blue:#0665BD;
+    --blue-light:#8CBEEB;
+    --cream:#F4EEE2;
+    --cream-card:#FFFDF9;
+    --ink:#1C1710;
+    --ink-soft:#6b6154;
+    --gold:#E6B25A;
+    --line-on-navy: rgba(255,255,255,.12);
+    --line-on-cream: rgba(28,23,16,.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Tajawal', sans-serif;
+    background:var(--navy);
+    color:#fff;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block; max-width:100%;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+  section{position:relative; overflow:hidden;}
+
+  /* signature diagonal corner motif — reused from the brand's social templates */
+  .corner{position:absolute; width:0; height:0;}
+  .corner-tl{top:0; right:0; border-style:solid; border-width:0 130px 130px 0; border-color:transparent var(--blue) transparent transparent;}
+  .corner-bl{bottom:0; left:0; border-style:solid; border-width:110px 0 0 110px; border-color:transparent transparent transparent var(--blue);}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(3,12,19,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-on-navy);
+  }
+  nav.wrap{display:flex; align-items:center; justify-content:space-between; height:76px;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand img{height:34px; width:auto;}
+  .brand span{font-weight:800; font-size:19px; letter-spacing:.3px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 22px; border-radius:999px;
+    font-weight:700; font-size:15px;
+    background:var(--blue); color:#fff;
+    box-shadow:0 4px 14px rgba(6,101,189,.22);
+    transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{background:#0A7AE0; transform:translateY(-1px); box-shadow:0 10px 26px rgba(6,101,189,.38);}
+  .btn:active{transform:translateY(0);}
+  .btn-ghost{background:transparent; border:1.5px solid rgba(255,255,255,.35); box-shadow:none;}
+  .btn-ghost:hover{background:rgba(255,255,255,.08); border-color:#fff;}
+  .btn svg{width:18px; height:18px; flex-shrink:0;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:76px 0 96px;
+    background:
+      radial-gradient(700px 420px at 78% -8%, rgba(6,101,189,.35), transparent 60%),
+      var(--navy);
+  }
+  .hero .wrap{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:700; letter-spacing:.4px;
+    color:var(--blue-light); background:rgba(140,190,235,.1);
+    border:1px solid rgba(140,190,235,.25);
+    padding:7px 14px; border-radius:999px; margin-bottom:22px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);}
+  h1{
+    font-size:52px; font-weight:900; line-height:1.18;
+    margin-bottom:20px; letter-spacing:-.5px;
+  }
+  h1 em{font-style:normal; color:var(--blue-light);}
+  .lede{font-size:19px; color:rgba(255,255,255,.75); max-width:480px; margin-bottom:34px;}
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn-lg{padding:16px 30px; font-size:16px;}
+  .hero-media{position:relative;}
+  .hero-media .frame{
+    position:relative; border-radius:22px; overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.55);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .hero-media img{width:100%; height:100%; object-fit:cover; aspect-ratio:1/1;}
+  .hero-badge{
+    position:absolute; bottom:-18px; right:-18px;
+    background:var(--cream-card); color:var(--ink);
+    border-radius:16px; padding:16px 20px;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+    display:flex; align-items:center; gap:12px;
+    max-width:230px;
+  }
+  .hero-badge .ic{
+    width:38px; height:38px; border-radius:50%;
+    background:var(--blue); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:16px;
+  }
+  .hero-badge b{display:block; font-size:14px; font-weight:800;}
+  .hero-badge small{display:block; font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+
+  /* ---------- TRUST STRIP ---------- */
+  .trust{background:var(--navy-mid); border-top:1px solid var(--line-on-navy); border-bottom:1px solid var(--line-on-navy);}
+  .trust .wrap{display:grid; grid-template-columns:repeat(3,1fr); padding:34px 28px;}
+  .trust-item{display:flex; align-items:center; gap:16px; justify-content:center; text-align:right; padding:0 18px;}
+  .trust-item + .trust-item{border-right:1px solid var(--line-on-navy);}
+  .trust-item .ti-icon{
+    width:46px; height:46px; border-radius:13px; flex-shrink:0;
+    background:linear-gradient(145deg, rgba(140,190,235,.16), rgba(6,101,189,.08));
+    border:1px solid rgba(140,190,235,.18);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .trust-item svg{width:22px; height:22px; color:var(--blue-light); flex-shrink:0;}
+  .trust-item b{display:block; font-size:15.5px; font-weight:800;}
+  .trust-item span{display:block; font-size:13px; color:rgba(255,255,255,.55); margin-top:1px;}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .sec-head{max-width:560px; margin-bottom:52px;}
+  .sec-head .kicker{
+    font-size:13px; font-weight:800; letter-spacing:.5px;
+    color:var(--blue); margin-bottom:10px; display:block;
+  }
+  .light .sec-head .kicker{color:var(--blue);}
+  .dark .sec-head .kicker{color:var(--blue-light);}
+  .sec-head h2{font-size:36px; font-weight:900; line-height:1.25; margin-bottom:14px;}
+  .light .sec-head h2{color:var(--ink);}
+  .sec-head p{font-size:16.5px;}
+  .light .sec-head p{color:var(--ink-soft);}
+  .dark .sec-head p{color:rgba(255,255,255,.65);}
+
+  /* ---------- PRODUCTS ---------- */
+  .light{background:var(--cream); color:var(--ink);}
+  .products{padding:90px 0;}
+  .grid-products{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .pcard{
+    background:var(--cream-card); border-radius:18px; overflow:hidden;
+    border:1px solid var(--line-on-cream);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .pcard:hover{transform:translateY(-4px); box-shadow:0 18px 34px rgba(28,23,16,.12);}
+  .pcard .pimg{aspect-ratio:16/10; overflow:hidden;}
+  .pcard .pimg img{width:100%; height:100%; object-fit:cover;}
+  .pcard .pbody{padding:18px 20px 22px;}
+  .pcard h3{font-size:18px; font-weight:800; margin-bottom:2px;}
+  .pcard .en{font-size:12.5px; color:var(--ink-soft); font-weight:500; letter-spacing:.3px; margin-bottom:12px; display:block;}
+  .pcard .price-row{display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px dashed var(--line-on-cream);}
+  .pcard .soon{font-size:13.5px; font-weight:700; color:var(--gold); background:rgba(230,178,90,.14); padding:5px 12px; border-radius:999px;}
+
+  /* ---------- PRICE LIST POSTER (matches the printed flyer 1:1) ---------- */
+  .poster-toolbar{display:flex; justify-content:center; margin-bottom:20px;}
+  .dl-btn{display:inline-flex; align-items:center; gap:8px;}
+  .dl-btn svg{width:18px; height:18px;}
+  .dl-btn:disabled{opacity:.6; cursor:default;}
+
+  #poster{
+    width:100%; max-width:460px; margin:0 auto; background:var(--navy);
+    border-radius:22px; overflow:hidden; position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,.25); color:#fff;
+  }
+  #poster .badge-wrap{padding:36px 20px 14px; text-align:center;}
+  #poster .badge-wrap img{height:56px; margin:0 auto 10px;}
+  #poster .badge-wrap h1{font-size:26px; font-weight:900; letter-spacing:.5px;}
+  #poster .badge-wrap h1 span{color:var(--blue-light);}
+  #poster .badge-wrap .ar-name{font-size:14px; color:rgba(255,255,255,.65); margin-top:2px;}
+  #poster .tagline-bar{
+    background:var(--blue); margin-top:14px; padding:8px; text-align:center;
+    font-size:12.5px; font-weight:700; letter-spacing:.3px;
+  }
+  #poster .tagline-bar .sub{font-size:11px; font-weight:500; opacity:.85; display:block; margin-top:1px;}
+  #poster .trust-row{display:flex; justify-content:center; gap:26px; padding:16px 10px 6px;}
+  #poster .trust-row div{text-align:center; font-size:10px; color:rgba(255,255,255,.6); width:70px;}
+  #poster .trust-row svg{width:22px; height:22px; color:var(--blue-light); margin-bottom:4px;}
+  #poster .list-title{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:16px 10px 12px; font-size:19px; font-weight:900;
+  }
+  #poster .list-title .en{color:var(--blue-light);}
+  #poster .list-title .divider{width:1px; height:18px; background:rgba(255,255,255,.3);}
+  #poster .date-row{text-align:center; font-size:12px; color:var(--gold); font-weight:700; padding-bottom:10px;}
+  #poster table.plist{width:100%; border-collapse:collapse;}
+  #poster .thead-row{background:var(--blue);}
+  #poster .thead-row th{padding:9px 14px; font-size:11.5px; font-weight:700; color:#fff;}
+  #poster .thead-row th span{display:block; font-size:9.5px; font-weight:500; opacity:.85;}
+  #poster .prow td{padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:middle;}
+  #poster .prow:last-child td{border-bottom:none;}
+  #poster .prow .pimg{width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid var(--blue-light); flex-shrink:0;}
+  #poster .prow .pimg img{width:100%; height:100%; object-fit:cover;}
+  #poster .prow .pname{display:flex; align-items:center; gap:10px;}
+  #poster .prow .pname b{font-size:13.5px; font-weight:800; display:block; color:#fff;}
+  #poster .prow .pname span{font-size:9.5px; color:var(--blue-light); font-weight:600;}
+  #poster .prow .pprice{text-align:left; white-space:nowrap;}
+  #poster .prow .pprice b{font-size:14px; font-weight:900; color:#fff;}
+  #poster .prow .pprice small{font-size:9px; color:rgba(255,255,255,.5); display:block;}
+  #poster .prow .pprice .tbd{font-size:11px; color:var(--gold); font-weight:700;}
+  #poster .footer-trust{display:flex; justify-content:center; gap:18px; padding:18px 10px 6px; flex-wrap:wrap;}
+  #poster .footer-trust div{display:flex; align-items:center; gap:5px; font-size:9.5px; color:rgba(255,255,255,.6);}
+  #poster .footer-trust svg{width:14px; height:14px; color:var(--blue-light);}
+  #poster .footer-tag{text-align:center; padding:10px 10px 26px; font-size:13px; font-weight:800; color:var(--gold);}
+  #poster .footer-tag .en{display:block; font-size:9.5px; color:rgba(255,255,255,.5); font-weight:500; margin-top:1px;}
+  #poster .wa-strip{background:var(--navy2, #081826); text-align:center; padding:12px; font-size:12px; color:rgba(255,255,255,.7); border-top:1px solid rgba(255,255,255,.08);}
+  #poster .wa-strip b{color:#fff;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{padding:90px 0; background:var(--navy);}
+  .steps-list{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .step{background:var(--navy-card); border:1px solid var(--line-on-navy); border-radius:18px; padding:30px 26px;}
+  .step .num{
+    width:46px; height:46px; border-radius:50%; background:var(--blue);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:18px; margin-bottom:20px;
+  }
+  .step h3{font-size:18px; font-weight:800; margin-bottom:8px;}
+  .step p{font-size:14.5px; color:rgba(255,255,255,.6);}
+
+  /* ---------- SUBSCRIPTION CALLOUT ---------- */
+  .sub{padding:0;}
+  .sub-inner{
+    background:linear-gradient(120deg, var(--navy) 0%, #0A2C4A 100%);
+    border-radius:26px; margin:0 28px 0; padding:64px 52px;
+    display:grid; grid-template-columns:1.2fr .8fr; gap:40px; align-items:center;
+    position:relative; overflow:hidden;
+  }
+  .sub-inner:before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(420px 260px at 90% 10%, rgba(140,190,235,.25), transparent 60%);
+  }
+  .sub-inner > *{position:relative;}
+  .sub h2{font-size:32px; font-weight:900; margin-bottom:14px; color:#fff;}
+  .sub p{font-size:16px; color:rgba(255,255,255,.7); margin-bottom:28px; max-width:440px;}
+  .sub-card{
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.15);
+    border-radius:18px; padding:26px;
+  }
+  .sub-card ul{list-style:none;}
+  .sub-card li{
+    display:flex; align-items:center; gap:10px; color:#fff;
+    font-size:14.5px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .sub-card li:last-child{border-bottom:none;}
+  .sub-card li:before{content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0;}
+
+  /* ---------- COVERAGE ---------- */
+  .coverage{padding:90px 0;}
+  .cov-box{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+  }
+  .cov-list{list-style:none;}
+  .cov-list li{display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line-on-cream); font-size:15.5px;}
+  .cov-list li:last-child{border-bottom:none;}
+  .cov-list svg{width:20px;height:20px;color:var(--blue); flex-shrink:0; margin-top:2px;}
+  .cov-visual{
+    aspect-ratio:1/1; border-radius:22px;
+    background:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .cov-visual img{width:120px; opacity:.9;}
+  .cov-ring{position:absolute; border:1.5px dashed rgba(140,190,235,.35); border-radius:50%;}
+  .cov-ring.r1{width:70%; height:70%;}
+  .cov-ring.r2{width:46%; height:46%;}
+
+  /* ---------- FOOTER / CTA ---------- */
+  .cta-final{
+    padding:90px 0 70px; text-align:center; background:var(--navy);
+    border-top:1px solid var(--line-on-navy);
+  }
+  .cta-final h2{font-size:34px; font-weight:900; margin-bottom:16px;}
+  .cta-final p{color:rgba(255,255,255,.6); font-size:16px; margin-bottom:32px;}
+  footer{background:var(--navy-mid); padding:34px 0; border-top:1px solid var(--line-on-navy);}
+  footer .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;}
+  footer .fbrand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:15px;}
+  footer .fbrand img{height:22px;}
+  footer .fmeta{font-size:13px; color:rgba(255,255,255,.45);}
+
+  /* floating whatsapp button */
+  .float-wa{
+    position:fixed; bottom:24px; left:24px; z-index:60;
+    width:60px; height:60px; border-radius:50%;
+    background:var(--blue); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 28px rgba(6,101,189,.5);
+    transition:transform .2s ease;
+  }
+  .float-wa:hover{transform:scale(1.08);}
+  .float-wa svg{width:28px; height:28px; color:#fff;}
+
+  .reveal{opacity:1;}
+  @media (prefers-reduced-motion: no-preference){
+    .reveal{animation:rise .6s ease both;}
+    @keyframes rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+  }
+
+  @media (max-width: 880px){
+    .hero .wrap{grid-template-columns:1fr; gap:40px;}
+    h1{font-size:36px;}
+    .trust .wrap{grid-template-columns:1fr; gap:18px; padding:26px 24px;}
+    .trust-item{justify-content:flex-start; text-align:right;}
+    .trust-item + .trust-item{border-right:none; border-top:1px solid var(--line-on-navy); padding-top:18px;}
+    .grid-products{grid-template-columns:1fr 1fr;}
+    .steps-list{grid-template-columns:1fr;}
+    .sub-inner{grid-template-columns:1fr; padding:40px 26px; margin:0 16px;}
+    .cov-box{grid-template-columns:1fr;}
+    nav.wrap .brand span{display:none;}
+  }
+  @media (max-width: 560px){
+    .grid-products{grid-template-columns:1fr;}
+    .wrap{padding:0 20px;}
+    .hero{padding:48px 0 70px;}
+    h1{font-size:30px;}
+    .lede{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="brand">
+      <img src="assets/icon-white.png" alt="Fresh Zone">
+      <span>FRESH ZONE</span>
+    </div>
+    <a class="btn" href="https://wa.me/201027572394?text=عايز%20أطلب%20من%20فريش%20زون" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.34a9.9 9.9 0 0 0 4.62 1.15h.01c5.46 0 9.9-4.45 9.9-9.9C21.95 6.45 17.5 2 12.04 2Zm5.83 14.02c-.25.7-1.24 1.28-2.03 1.44-.54.11-1.24.2-3.6-.77-3.02-1.25-4.97-4.32-5.12-4.52-.15-.2-1.23-1.63-1.23-3.11 0-1.48.78-2.2 1.05-2.5.27-.3.6-.37.8-.37.2 0 .4 0 .58.01.19.01.44-.07.68.53.25.6.86 2.08.93 2.24.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.4-.44.54-.15.15-.3.31-.13.6.17.3.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.47.3.15.48.13.66-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.66-.15.27.1 1.7.8 2 1 .3.15.5.22.57.34.08.13.08.72-.17 1.42Z"/></svg>
+      اطلب على واتساب
+    </a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="corner corner-tl"></div>
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow"><span class="dot"></span> جاردنيا سيتي · مدينة نصر</span>
+      <h1>إحنا في جاردنيا<br><em>جاهزين نوصلك</em></h1>
+      <p class="lede">فراخ طازة بتتفرز جوه المنطقة نفسها، وتوصلك لباب شقتك في نفس اليوم — من غير ما تسيب البيت أو تستنى في الزحمة.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-lg" href="https://wa.me/201027572394?text=عايز%20أطلب%20من%20فريش%20زون" target="_blank" rel="noopener">اطلب دلوقتي</a>
+        <a class="btn btn-lg btn-ghost" href="#products">شوف المنتجات</a>
+      </div>
+    </div>
+    <div class="hero-media reveal">
+      <div class="frame">
+        <img src="assets/hero.jpg" alt="توصيل فريش زون في جاردنيا">
+      </div>
+      <div class="hero-badge">
+        <div class="ic">F</div>
+        <div>
+          <b>فرز يومي</b>
+          <small>من المصنع لباب شقتك في نفس اليوم</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="wrap">
+    <div class="trust-item">
+      <div class="ti-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C9 6 6 8.5 6 13a6 6 0 0 0 12 0c0-4.5-3-7-6-11Z"/></svg></div>
+      <div><b>100% طازج</b><span>فرز يومي، مش نايم في مخزن</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="ti-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/><path d="m8.5 12 2.3 2.3L15.5 9.5"/></svg></div>
+      <div><b>جودة عالية</b><span>معايير تصنيع وتغليف صارمة</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="ti-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/><path d="M12 2 9.8 4.5M12 2l2.2 2.5M12 22l-2.2-2.5M12 22l2.2-2.5M4.2 6.5l3.3.4M4.2 6.5l1-3.1M19.8 6.5l-3.3.4M19.8 6.5l-1-3.1M4.2 17.5l3.3-.4M4.2 17.5l1 3.1M19.8 17.5l-3.3-.4M19.8 17.5l1 3.1"/></svg></div>
+      <div><b>إبقاء طازج</b><span>سلسلة تبريد كاملة للباب</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="products light" id="products">
+  <div class="wrap">
+    <div class="sec-head reveal" style="text-align:center; margin:0 auto 34px;">
+      <span class="kicker">المنتجات</span>
+      <h2>قائمة الأسعار</h2>
+      <p>محدّثة يومياً حسب سعر البورصة.</p>
+    </div>
+
+    <div class="poster-toolbar">
+      <button class="btn dl-btn" id="downloadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+        تحميل الصورة
+      </button>
+    </div>
+
+    <div id="poster">
+      <div class="badge-wrap">
+        <img src="assets/icon-white.png" alt="Fresh Zone">
+        <h1>FRESH<span>ZONE</span></h1>
+        <div class="ar-name">فريش زون</div>
+      </div>
+      <div class="tagline-bar">
+        FRESH CHICKEN
+        <span>دواجن طازجة</span>
+      </div>
+
+      <div class="trust-row">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C9 6 6 8.5 6 13a6 6 0 0 0 12 0c0-4.5-3-7-6-11Z"/></svg>
+          100% طازج
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/></svg>
+          جودة عالية
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/></svg>
+          إبقاء طازج
+        </div>
+      </div>
+
+      <div class="list-title">
+        <span>قائمة الأسعار</span>
+        <span class="divider"></span>
+        <span class="en">PRICE LIST</span>
+      </div>
+      <div class="date-row" id="dateRow"></div>
+
+      <table class="plist">
+        <thead>
+          <tr class="thead-row">
+            <th style="text-align:right;">المنتج<span>PRODUCT</span></th>
+            <th style="text-align:left;">السعر/كجم<span>PRICE/KG</span></th>
+          </tr>
+        </thead>
+        <tbody id="plistBody">
+          <tr><td colspan="2" style="text-align:center; padding:30px; font-size:13px; color:rgba(255,255,255,.5);">بيتم التحميل...</td></tr>
+        </tbody>
+      </table>
+
+      <div class="footer-trust">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> جودة مضمونة</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/></svg> طازج يومياً</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/></svg> نظافة وأمان</div>
+      </div>
+      <div class="footer-tag">طازج لكل يوم<span class="en">FRESH EVERY DAY</span></div>
+      <div class="wa-strip">للطلب: <b>01027572394</b> — واتساب</div>
+    </div>
+
+    <div style="text-align:center; margin-top:26px;">
+      <h3 style="font-size:16px; margin-bottom:10px;">مش لاقي اللي محتاجه؟</h3>
+      <a class="btn" href="https://wa.me/201027572394?text=عايز%20أسأل%20عن%20منتج" target="_blank" rel="noopener">اسأل على واتساب</a>
+    </div>
+  </div>
+</section>
+
+<section class="steps">
+  <div class="corner corner-bl"></div>
+  <div class="wrap">
+    <div class="sec-head dark reveal">
+      <span class="kicker">الطلب بسيط</span>
+      <h2>اطلب في 3 خطوات</h2>
+      <p>من الرسالة لباب الشقة، من غير تعقيد.</p>
+    </div>
+    <div class="steps-list">
+      <div class="step reveal">
+        <div class="num">١</div>
+        <h3>تبعتلنا رسالة</h3>
+        <p>على واتساب، في أي وقت خلال اليوم.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">٢</div>
+        <h3>تختار الأصناف</h3>
+        <p>من الكتالوج اللي هنبعتهولك على طول.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">٣</div>
+        <h3>يوصلك الطلب</h3>
+        <p>لباب شقتك في نفس اليوم.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="light sub" style="padding:90px 0;">
+  <div class="sub-inner reveal">
+    <div>
+      <h2>كرتونة الشهر</h2>
+      <p>بدل ما تفكر كل أسبوع "هطبخ إيه"، احجز كرتونة شهرية بأصناف تختارها إنت، توصلك يوم ثابت كل شهر وبسعر واحد من غير مفاجآت.</p>
+      <a class="btn btn-lg" href="https://wa.me/201027572394?text=عايز%20أعرف%20عن%20كرتونة%20الشهر" target="_blank" rel="noopener">اعرف أكتر على واتساب</a>
+    </div>
+    <div class="sub-card">
+      <ul>
+        <li>تختار الأصناف بنفسك</li>
+        <li>توصيل يوم ثابت كل شهر</li>
+        <li>سعر واحد من غير مفاجآت</li>
+        <li>أولوية في التوصيل</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="coverage light">
+  <div class="wrap">
+    <div class="cov-box">
+      <div class="reveal">
+        <span class="kicker" style="color:var(--blue); font-weight:800; font-size:13px; display:block; margin-bottom:10px;">منطقة التوصيل</span>
+        <h2 style="font-size:32px; font-weight:900; margin-bottom:18px; color:var(--ink);">قريبين منك فعلاً</h2>
+        <ul class="cov-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> جاردنيا سيتي</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> المناطق القريبة في مدينة نصر</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> توصيل في نفس يوم الطلب</li>
+        </ul>
+      </div>
+      <div class="cov-visual reveal">
+        <div class="cov-ring r1"></div>
+        <div class="cov-ring r2"></div>
+        <img src="assets/icon-white.png" alt="">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="wrap">
+    <h2>جاهز تجرب فريش زون؟</h2>
+    <p>ابعتلنا رسالة دلوقتي، والطلب يوصلك في نفس اليوم.</p>
+    <a class="btn btn-lg" href="https://wa.me/201027572394?text=عايز%20أطلب%20من%20فريش%20زون" target="_blank" rel="noopener">اطلب على واتساب — 01027572394</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fbrand"><img src="assets/icon-white.png" alt=""> FRESH ZONE</div>
+    <div class="fmeta">© 2026 Fresh Zone — جاردنيا سيتي، مدينة نصر</div>
+  </div>
+</footer>
+
+<a class="float-wa" href="https://wa.me/201027572394?text=عايز%20أطلب%20من%20فريش%20زون" target="_blank" rel="noopener" aria-label="اطلب على واتساب">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.34a9.9 9.9 0 0 0 4.62 1.15h.01c5.46 0 9.9-4.45 9.9-9.9C21.95 6.45 17.5 2 12.04 2Zm5.83 14.02c-.25.7-1.24 1.28-2.03 1.44-.54.11-1.24.2-3.6-.77-3.02-1.25-4.97-4.32-5.12-4.52-.15-.2-1.23-1.63-1.23-3.11 0-1.48.78-2.2 1.05-2.5.27-.3.6-.37.8-.37.2 0 .4 0 .58.01.19.01.44-.07.68.53.25.6.86 2.08.93 2.24.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.4-.44.54-.15.15-.3.31-.13.6.17.3.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.47.3.15.48.13.66-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.66-.15.27.1 1.7.8 2 1 .3.15.5.22.57.34.08.13.08.72-.17 1.42Z"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  // ---- Live price-list poster from Supabase (base exchange price + per-product markup) ----
+  const SUPA_URL = 'https://gnlvytjcryizrkckpgtx.supabase.co';
+  const SUPA_KEY = 'sb_publishable_6Dgu7fTMdr1mqrUsHiiEQQ_GXZOXi91';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  function escapeHtml(str){
+    return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  const todayStr = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const dateRowEl = document.getElementById('dateRow');
+  if (dateRowEl) dateRowEl.textContent = 'أسعار يوم ' + todayStr;
+
+  function computeFinalPrice(p, basePrice){
+    if (p.price !== null && p.price !== undefined) return Number(p.price);
+    if (basePrice === null || basePrice === undefined) return null;
+    const base = Number(basePrice);
+    const mv = Number(p.markup_value || 0);
+    return p.markup_type === 'percent' ? base * (1 + mv/100) : base + mv;
+  }
+
+  function posterRowHtml(p, basePrice){
+    const final = computeFinalPrice(p, basePrice);
+    const priceHtml = final !== null
+      ? `<b>${final.toLocaleString('ar-EG', {maximumFractionDigits:2})}</b><small>ج.م</small>`
+      : `<span class="tbd">قريباً</span>`;
+    const img = p.image_url || 'assets/hero.jpg';
+    return `
+      <tr class="prow">
+        <td>
+          <div class="pname">
+            <div class="pimg"><img src="${escapeHtml(img)}" alt=""></div>
+            <div>
+              <b>${escapeHtml(p.name_ar)}</b>
+              <span>${escapeHtml(p.name_en || '')}</span>
+            </div>
+          </div>
+        </td>
+        <td class="pprice">${priceHtml}</td>
+      </tr>`;
+  }
+
+  async function loadPoster(){
+    const body = document.getElementById('plistBody');
+    if (!body) return;
+    try {
+      const [{ data: settings }, { data: products, error }] = await Promise.all([
+        sb.from('market_settings').select('*').eq('id',1).single(),
+        sb.from('products').select('*').eq('is_available', true).order('sort_order', { ascending:true })
+      ]);
+      if (error || !products || products.length === 0){
+        body.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:30px; font-size:13px; color:rgba(255,255,255,.5);">مفيش أصناف متاحة دلوقتي</td></tr>';
+        return;
+      }
+      const basePrice = settings ? settings.base_price : null;
+      body.innerHTML = products.map(p => posterRowHtml(p, basePrice)).join('');
+    } catch (e) {
+      console.warn('Fresh Zone: could not load live price list.', e);
+      body.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:30px; font-size:13px; color:rgba(255,255,255,.5);">تعذّر تحميل الأسعار، حاول تفتح الصفحة تاني</td></tr>';
+    }
+  }
+
+  const downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) downloadBtn.addEventListener('click', async ()=>{
+    downloadBtn.disabled = true;
+    const originalHtml = downloadBtn.innerHTML;
+    downloadBtn.textContent = 'بيتم التجهيز...';
+    try {
+      const canvas = await html2canvas(document.getElementById('poster'), {
+        backgroundColor: '#030C13', scale: 2, useCORS: true
+      });
+      const link = document.createElement('a');
+      const dateSlug = new Date().toISOString().slice(0,10);
+      link.download = `fresh-zone-price-list-${dateSlug}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e){
+      alert('حصلت مشكلة في تجهيز الصورة، جرب تاني.');
+      console.error(e);
+    } finally {
+      downloadBtn.disabled = false;
+      downloadBtn.innerHTML = originalHtml;
+    }
+  });
+
+  loadPoster();
+</script>
+
+</body>
+</html>

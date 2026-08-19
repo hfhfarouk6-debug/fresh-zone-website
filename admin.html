@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | Fresh Zone</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#030C13; --navy-mid:#0B1A26; --navy-card:#0F2033; --navy-soft:#13273b;
+    --blue:#0665BD; --blue-light:#8CBEEB; --blue-dim:rgba(6,101,189,.12);
+    --cream:#F4EEE2; --ink:#1C1710; --ink-soft:#6b6154;
+    --gold:#E6B25A; --danger:#D6455A; --green:#2FA86A;
+    --line: rgba(255,255,255,.12); --line-soft: rgba(28,23,16,.09);
+    --radius:14px; --sidebar-w:250px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Tajawal', sans-serif; background:#EFE9DC; color:var(--ink); min-height:100vh; font-size:15px;}
+  img{max-width:100%; display:block;}
+  ::selection{background:var(--blue); color:#fff;}
+
+  /* ---------- LOGIN ---------- */
+  #loginScreen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(700px 460px at 82% -6%, rgba(6,101,189,.30), transparent 60%),
+      radial-gradient(500px 360px at 10% 108%, rgba(230,178,90,.10), transparent 60%),
+      var(--navy);
+    padding:24px; position:relative; overflow:hidden;
+  }
+  .login-box{
+    background:rgba(15,32,51,.75); backdrop-filter:blur(14px);
+    border:1px solid var(--line); border-radius:22px;
+    padding:44px 36px; width:100%; max-width:390px; text-align:center;
+    box-shadow:0 30px 70px rgba(0,0,0,.4); position:relative; z-index:1;
+  }
+  .login-box img{height:42px; margin:0 auto 20px; filter:drop-shadow(0 4px 14px rgba(6,101,189,.4));}
+  .login-box h1{color:#fff; font-size:21px; font-weight:800; margin-bottom:6px;}
+  .login-box p{color:rgba(255,255,255,.5); font-size:13.5px; margin-bottom:30px;}
+  .field{text-align:right; margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:rgba(255,255,255,.55); margin-bottom:7px; letter-spacing:.2px;}
+  .field input{
+    width:100%; padding:13px 15px; border-radius:11px; border:1px solid var(--line);
+    background:rgba(255,255,255,.04); color:#fff; font-family:inherit; font-size:15px;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .field input:focus{outline:none; border-color:var(--blue); background:rgba(255,255,255,.07);}
+  .btn{
+    padding:13px; border-radius:11px; border:none; cursor:pointer;
+    background:var(--blue); color:#fff; font-family:inherit; font-weight:800; font-size:14.5px;
+    transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{background:#0A7AE0; box-shadow:0 8px 20px rgba(6,101,189,.35);}
+  .btn:active{transform:scale(.98);}
+  .btn:disabled{opacity:.6; cursor:default; transform:none; box-shadow:none;}
+  #loginForm .btn{width:100%; margin-top:8px; padding:14px;}
+  .login-err{color:#FF8A9B; font-size:13px; margin-top:14px; min-height:16px; font-weight:600;}
+
+  /* ---------- SHELL: sidebar + main ---------- */
+  #adminScreen{display:none; min-height:100vh;}
+  .shell{display:flex; min-height:100vh;}
+
+  .sidebar{
+    width:var(--sidebar-w); flex-shrink:0; background:var(--navy); color:#fff;
+    display:flex; flex-direction:column; position:sticky; top:0; height:100vh;
+    border-left:1px solid var(--line);
+  }
+  .sidebar-brand{display:flex; align-items:center; gap:11px; padding:26px 22px 22px;}
+  .sidebar-brand img{height:30px;}
+  .sidebar-brand span{font-weight:800; font-size:15px; letter-spacing:.2px;}
+  .sidebar-nav{flex:1; padding:8px 14px;}
+  .nav-item{
+    display:flex; align-items:center; gap:11px; padding:11px 14px; border-radius:10px;
+    color:rgba(255,255,255,.6); font-size:14px; font-weight:700; margin-bottom:4px;
+    text-decoration:none; transition:background .15s ease, color .15s ease; cursor:pointer;
+  }
+  .nav-item svg{width:18px; height:18px; flex-shrink:0;}
+  .nav-item:hover{background:rgba(255,255,255,.05); color:#fff;}
+  .nav-item.active{background:var(--blue); color:#fff;}
+  .sidebar-foot{padding:16px; border-top:1px solid var(--line);}
+  .sidebar-foot button{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+    background:transparent; border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.75);
+    padding:10px; border-radius:10px; font-family:inherit; cursor:pointer; font-size:13px; font-weight:700;
+    transition:background .15s ease, color .15s ease;
+  }
+  .sidebar-foot button:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .sidebar-foot button svg{width:15px; height:15px;}
+
+  .main-col{flex:1; min-width:0;}
+  .topbar{
+    display:none; align-items:center; justify-content:space-between;
+    background:var(--navy); color:#fff; padding:14px 20px; position:sticky; top:0; z-index:20;
+  }
+  .topbar .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:14px;}
+  .topbar .brand img{height:24px;}
+  .topbar button{background:transparent; border:1px solid rgba(255,255,255,.3); color:#fff; padding:7px 13px; border-radius:8px; font-family:inherit; cursor:pointer; font-size:12.5px;}
+
+  main{max-width:1080px; margin:0 auto; padding:36px 32px 80px;}
+  .page-head{margin-bottom:26px;}
+  .page-head h1{font-size:23px; font-weight:900; margin-bottom:4px;}
+  .page-head p{font-size:13.5px; color:var(--ink-soft);}
+
+  /* ---------- STAT CARDS ---------- */
+  .stats-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px;}
+  .stat-card{
+    background:#fff; border-radius:var(--radius); padding:20px 22px;
+    border:1px solid var(--line-soft); box-shadow:0 2px 10px rgba(28,23,16,.04);
+  }
+  .stat-card .stat-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .stat-card .stat-icon{
+    width:34px; height:34px; border-radius:9px; background:var(--blue-dim); color:var(--blue);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stat-card .stat-icon svg{width:17px; height:17px;}
+  .stat-card .stat-val{font-size:24px; font-weight:900; line-height:1;}
+  .stat-card .stat-label{font-size:12px; color:var(--ink-soft); font-weight:600; margin-top:6px;}
+
+  .toolbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px;}
+  .toolbar h2{font-size:17px; font-weight:800;}
+  .btn-add{width:auto; padding:11px 20px; display:inline-flex; align-items:center; gap:7px;}
+  .btn-add svg{width:16px; height:16px;}
+
+  .market-box{
+    background:linear-gradient(120deg, var(--navy) 0%, #0d2743 100%);
+    border-radius:var(--radius); padding:22px 26px; margin-bottom:22px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    position:relative; overflow:hidden;
+  }
+  .market-box:before{content:''; position:absolute; inset:0; background:radial-gradient(300px 180px at 90% 0%, rgba(140,190,235,.18), transparent 60%); pointer-events:none;}
+  .market-info{display:flex; align-items:center; gap:14px; position:relative;}
+  .market-info .m-icon{
+    width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .market-info .m-icon svg{width:22px; height:22px; color:var(--blue-light);}
+  .market-label{color:#fff; font-weight:800; font-size:14.5px;}
+  .market-updated{color:rgba(255,255,255,.45); font-size:11.5px; margin-top:2px;}
+  .market-input-row{display:flex; gap:10px; position:relative;}
+  .market-input-row input{
+    width:150px; padding:12px 14px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(255,255,255,.08); color:#fff; font-family:inherit; font-size:15px; font-weight:700;
+  }
+  .market-input-row input:focus{outline:none; border-color:var(--blue-light);}
+  .btn-market{width:auto; padding:12px 20px; white-space:nowrap;}
+
+  .table-wrap{background:#fff; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line-soft); box-shadow:0 2px 10px rgba(28,23,16,.04);}
+  table{width:100%; border-collapse:collapse;}
+  th{background:var(--cream); color:var(--ink-soft); font-size:11.5px; font-weight:800; letter-spacing:.3px; padding:13px 16px; text-align:right; border-bottom:1px solid var(--line-soft);}
+  td{padding:13px 16px; border-bottom:1px solid var(--line-soft); font-size:14px; vertical-align:middle;}
+  tbody tr{transition:background .12s ease;}
+  tbody tr:hover{background:#FBF8F2;}
+  tr:last-child td{border-bottom:none;}
+  td.thumb img{width:46px; height:46px; object-fit:cover; border-radius:10px; border:1px solid var(--line-soft);}
+  td.thumb .no-img{width:46px; height:46px; border-radius:10px; background:var(--cream); display:flex; align-items:center; justify-content:center; color:var(--ink-soft);}
+  td.thumb .no-img svg{width:18px; height:18px;}
+  .badge{display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:999px; font-size:11.5px; font-weight:800;}
+  .badge:before{content:''; width:6px; height:6px; border-radius:50%;}
+  .badge.on{background:rgba(47,168,106,.12); color:var(--green);}
+  .badge.on:before{background:var(--green);}
+  .badge.off{background:rgba(214,69,90,.1); color:var(--danger);}
+  .badge.off:before{background:var(--danger);}
+  .row-actions{display:flex; gap:6px;}
+  .icon-btn{
+    background:transparent; border:1px solid var(--line-soft); border-radius:8px;
+    padding:7px 12px; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:700;
+    color:var(--ink); transition:background .15s ease, border-color .15s ease;
+  }
+  .icon-btn:hover{background:var(--cream); border-color:rgba(28,23,16,.2);}
+  .icon-btn.danger{color:var(--danger); border-color:rgba(214,69,90,.25);}
+  .icon-btn.danger:hover{background:rgba(214,69,90,.06);}
+  .empty-state{padding:70px 20px; text-align:center; color:var(--ink-soft);}
+  .empty-state svg{width:40px; height:40px; margin:0 auto 14px; opacity:.4;}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(3,12,19,.65); backdrop-filter:blur(3px);
+    align-items:center; justify-content:center; padding:20px; z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:#fff; border-radius:20px; width:100%; max-width:460px;
+    padding:30px; max-height:90vh; overflow-y:auto;
+    box-shadow:0 30px 70px rgba(0,0,0,.3);
+  }
+  .modal h3{font-size:19px; font-weight:900; margin-bottom:22px;}
+  .modal .field label{color:var(--ink-soft); font-size:12.5px; font-weight:700;}
+  .modal .field input, .modal .field select{background:var(--cream); color:var(--ink); border-color:rgba(28,23,16,.13);}
+  .modal .field input:focus, .modal .field select:focus{border-color:var(--blue); outline:none;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .switch-row{display:flex; align-items:center; justify-content:space-between; margin:18px 0 4px; padding:13px 15px; background:var(--cream); border-radius:11px;}
+  .switch-row span{font-size:13.5px; font-weight:700;}
+  .switch{position:relative; width:42px; height:23px; flex-shrink:0;}
+  .switch input{opacity:0; width:0; height:0;}
+  .slider{position:absolute; inset:0; background:#ccc; border-radius:999px; cursor:pointer; transition:.2s;}
+  .slider:before{content:''; position:absolute; width:17px; height:17px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s;}
+  input:checked + .slider{background:var(--blue);}
+  input:checked + .slider:before{transform:translateX(-19px);}
+  .modal-actions{display:flex; gap:10px; margin-top:24px;}
+  .modal-actions .btn{flex:1;}
+  .btn-secondary{background:var(--cream); color:var(--ink); border:1px solid rgba(28,23,16,.13);}
+  .btn-secondary:hover{background:#ece4d4;}
+  .hint{font-size:11.5px; color:var(--ink-soft); margin-top:-8px; margin-bottom:14px; line-height:1.5;}
+
+  .upload-box{
+    position:relative; height:112px; border-radius:12px;
+    border:1.5px dashed rgba(28,23,16,.22); background:var(--cream);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .upload-box:hover{border-color:var(--blue); background:#efe7d6;}
+  .upload-box img{width:100%; height:100%; object-fit:cover;}
+  #uploadPlaceholder{
+    display:flex; flex-direction:column; align-items:center; gap:7px;
+    color:var(--ink-soft); font-size:12px; font-weight:600; pointer-events:none;
+  }
+  #uploadPlaceholder svg{width:22px; height:22px;}
+  .upload-box input[type=file]{
+    position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+  }
+  .upload-status-msg{color:var(--blue); font-weight:700;}
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy); color:#fff; padding:13px 24px; border-radius:11px; font-size:13.5px; font-weight:700;
+    opacity:0; transition:.25s ease; z-index:100; pointer-events:none; box-shadow:0 12px 30px rgba(0,0,0,.3);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width: 880px){
+    .sidebar{display:none;}
+    .topbar{display:flex;}
+    main{padding:22px 16px 70px;}
+    .stats-row{grid-template-columns:1fr 1fr;}
+    .row2{grid-template-columns:1fr;}
+    .table-wrap{overflow-x:auto;}
+    table{min-width:640px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <div class="login-box">
+    <img src="assets/icon-white.png" alt="Fresh Zone">
+    <h1>لوحة تحكم فريش زون</h1>
+    <p>سجّل دخولك عشان تدير المنتجات والأسعار</p>
+    <form id="loginForm">
+      <div class="field">
+        <label>الإيميل</label>
+        <input type="email" id="loginEmail" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>كلمة السر</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button class="btn" type="submit" id="loginBtn">دخول</button>
+      <div class="login-err" id="loginErr"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div id="adminScreen">
+  <div class="shell">
+
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="assets/icon-white.png" alt="Fresh Zone">
+        <span>فريش زون</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          المنتجات والأسعار
+        </a>
+        <a class="nav-item" href="pricelist.html" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 2v20M4 6h4m-4 5h4m-4 5h4M15 6h5M15 11h5M15 16h5"/></svg>
+          قائمة الأسعار
+        </a>
+        <a class="nav-item" href="index.html" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11.5 12 4l9 7.5M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+          الموقع الرئيسي
+        </a>
+      </nav>
+      <div class="sidebar-foot">
+        <button class="logout-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          تسجيل خروج
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <div class="topbar">
+        <div class="brand"><img src="assets/icon-white.png" alt=""> لوحة تحكم فريش زون</div>
+        <button class="logout-btn">خروج</button>
+      </div>
+
+      <main>
+        <div class="page-head">
+          <h1>المنتجات والأسعار</h1>
+          <p>تحكّم في سعر البورصة اليومي وأصناف الموقع من هنا.</p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+            </div>
+            <div class="stat-val" id="statTotal">—</div>
+            <div class="stat-label">إجمالي الأصناف</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+            </div>
+            <div class="stat-val" id="statAvailable">—</div>
+            <div class="stat-label">متاح على الموقع</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg></div>
+            </div>
+            <div class="stat-val" id="statBase">—</div>
+            <div class="stat-label">سعر البورصة (جنيه)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+            </div>
+            <div class="stat-val" id="statUpdated" style="font-size:15px;">—</div>
+            <div class="stat-label">آخر تحديث للبورصة</div>
+          </div>
+        </div>
+
+        <div class="market-box" id="marketBox">
+          <div class="market-info">
+            <div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg></div>
+            <div>
+              <div class="market-label">سعر البورصة اليوم (جنيه/كجم)</div>
+              <div class="market-updated" id="marketUpdated"></div>
+            </div>
+          </div>
+          <div class="market-input-row">
+            <input type="number" step="0.25" id="marketPrice" placeholder="مثال: 62.5">
+            <button class="btn btn-market" id="saveMarketBtn">حفظ سعر اليوم</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <h2>كل الأصناف</h2>
+          <button class="btn btn-add" id="addBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            إضافة صنف
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>الاسم</th>
+                <th>الإضافة</th>
+                <th>السعر النهائي</th>
+                <th>الحالة</th>
+                <th>ترتيب</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="productsBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <div>مفيش أصناف لسه. دوس "إضافة صنف" تبدأ.</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: add/edit product ===== -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">إضافة صنف</h3>
+    <form id="productForm">
+      <input type="hidden" id="productId">
+      <div class="row2">
+        <div class="field">
+          <label>الاسم بالعربي</label>
+          <input type="text" id="nameAr" required>
+        </div>
+        <div class="field">
+          <label>الاسم بالإنجليزي</label>
+          <input type="text" id="nameEn">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>نوع الإضافة على البورصة</label>
+          <select id="markupType" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(28,23,16,.15); background:var(--cream); color:var(--ink); font-family:inherit; font-size:15px;">
+            <option value="fixed">رقم ثابت (جنيه)</option>
+            <option value="percent">نسبة %</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>قيمة الإضافة</label>
+          <input type="number" step="0.25" id="markupValue" value="0">
+        </div>
+      </div>
+      <div class="hint">مثال: لو البورصة 62 جنيه وحطيت رقم ثابت 8، السعر النهائي 70 جنيه. لو حطيت نسبة 10%، يبقى 68.2 جنيه.</div>
+      <div class="field">
+        <label>سعر يدوي (اختياري — لو عايز تتجاوز الحساب التلقائي)</label>
+        <input type="number" step="0.5" id="price" placeholder="سيبه فاضي عشان يتحسب تلقائي من البورصة">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>ترتيب الظهور</label>
+          <input type="number" id="sortOrder" value="1">
+        </div>
+        <div class="field">
+          <label>صورة المنتج</label>
+          <div class="upload-box" id="uploadBox">
+            <img id="imgPreview" src="" alt="" style="display:none;">
+            <div id="uploadPlaceholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+              <span>دوس تختار صورة</span>
+            </div>
+            <input type="file" id="imgFile" accept="image/*">
+          </div>
+          <input type="hidden" id="imageUrl">
+        </div>
+      </div>
+      <div class="hint" id="uploadStatus">JPG أو PNG، حد أقصى 5 ميجا</div>
+      <div class="switch-row">
+        <span>متاح على الموقع</span>
+        <label class="switch">
+          <input type="checkbox" id="isAvailable" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">إلغاء</button>
+        <button type="submit" class="btn" id="saveBtn">حفظ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  const SUPA_URL = 'https://gnlvytjcryizrkckpgtx.supabase.co';
+  const SUPA_KEY = 'sb_publishable_6Dgu7fTMdr1mqrUsHiiEQQ_GXZOXi91';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  const loginScreen = document.getElementById('loginScreen');
+  const adminScreen = document.getElementById('adminScreen');
+  const toastEl = document.getElementById('toast');
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(()=> toastEl.classList.remove('show'), 2200);
+  }
+  function escapeHtml(str){
+    return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // ---------- AUTH ----------
+  async function checkSession(){
+    const { data } = await sb.auth.getSession();
+    if (data.session){
+      loginScreen.style.display = 'none';
+      adminScreen.style.display = 'block';
+      loadProducts();
+    } else {
+      loginScreen.style.display = 'flex';
+      adminScreen.style.display = 'none';
+    }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginErr');
+    err.textContent = '';
+    btn.disabled = true; btn.textContent = 'بيتم الدخول...';
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    btn.disabled = false; btn.textContent = 'دخول';
+    if (error){
+      err.textContent = 'الإيميل أو كلمة السر غلط.';
+      return;
+    }
+    checkSession();
+  });
+
+  document.querySelectorAll('.logout-btn').forEach(btn => btn.addEventListener('click', async ()=>{
+    await sb.auth.signOut();
+    checkSession();
+  }));
+
+  // ---------- MARKET BASE PRICE ----------
+  let currentBasePrice = null;
+
+  async function loadMarketPrice(){
+    const { data, error } = await sb.from('market_settings').select('*').eq('id', 1).single();
+    if (error || !data) return;
+    currentBasePrice = data.base_price;
+    document.getElementById('marketPrice').value = data.base_price ?? '';
+    const upd = document.getElementById('marketUpdated');
+    const statBase = document.getElementById('statBase');
+    const statUpdated = document.getElementById('statUpdated');
+    if (statBase) statBase.textContent = data.base_price ?? '—';
+    if (data.updated_at){
+      const d = new Date(data.updated_at);
+      const label = d.toLocaleString('ar-EG', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+      upd.textContent = 'آخر تحديث: ' + label;
+      if (statUpdated) statUpdated.textContent = label;
+    } else {
+      if (statUpdated) statUpdated.textContent = 'لسه محدّدش';
+    }
+  }
+
+  document.getElementById('saveMarketBtn').addEventListener('click', async ()=>{
+    const btn = document.getElementById('saveMarketBtn');
+    const val = document.getElementById('marketPrice').value;
+    if (val === ''){ showToast('اكتب رقم البورصة الأول'); return; }
+    btn.disabled = true; btn.textContent = 'بيتم الحفظ...';
+    const { error } = await sb.from('market_settings').update({ base_price: Number(val) }).eq('id', 1);
+    btn.disabled = false; btn.textContent = 'حفظ سعر اليوم';
+    if (error){ showToast('حصل خطأ في الحفظ'); return; }
+    showToast('سعر البورصة اتحدّث');
+    loadMarketPrice();
+    loadProducts();
+  });
+
+  function computeFinalPrice(p){
+    if (p.price !== null && p.price !== undefined) return Number(p.price); // manual override wins
+    if (currentBasePrice === null || currentBasePrice === undefined) return null;
+    const base = Number(currentBasePrice);
+    const mv = Number(p.markup_value || 0);
+    return p.markup_type === 'percent' ? base * (1 + mv/100) : base + mv;
+  }
+
+  // ---------- LOAD PRODUCTS ----------
+  async function loadProducts(){
+    const body = document.getElementById('productsBody');
+    const empty = document.getElementById('emptyState');
+    body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#6b6154;">بيتم التحميل...</td></tr>';
+
+    await loadMarketPrice();
+
+    const { data, error } = await sb
+      .from('products')
+      .select('*')
+      .order('sort_order', { ascending: true });
+
+    if (error){
+      body.innerHTML = '';
+      showToast('حصل خطأ في تحميل المنتجات');
+      return;
+    }
+    if (!data || data.length === 0){
+      body.innerHTML = '';
+      empty.style.display = 'block';
+      const statTotal0 = document.getElementById('statTotal');
+      const statAvailable0 = document.getElementById('statAvailable');
+      if (statTotal0) statTotal0.textContent = '0';
+      if (statAvailable0) statAvailable0.textContent = '0';
+      return;
+    }
+    empty.style.display = 'none';
+    body.innerHTML = data.map(rowHtml).join('');
+
+    const statTotal = document.getElementById('statTotal');
+    const statAvailable = document.getElementById('statAvailable');
+    if (statTotal) statTotal.textContent = data.length;
+    if (statAvailable) statAvailable.textContent = data.filter(p => p.is_available).length;
+
+    body.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', ()=> openModal(JSON.parse(b.dataset.edit))));
+    body.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', ()=> deleteProduct(b.dataset.del, b.dataset.name)));
+  }
+
+  function rowHtml(p){
+    const finalPrice = computeFinalPrice(p);
+    const priceLabel = finalPrice !== null ? `${finalPrice.toLocaleString('ar-EG', {maximumFractionDigits:2})} ج.م` : '—';
+    const markupLabel = p.markup_type === 'percent' ? `${p.markup_value}%` : `+${p.markup_value} ج.م`;
+    const overrideNote = (p.price !== null && p.price !== undefined) ? '<br><span style="font-size:11px; color:#E6B25A;">سعر يدوي</span>' : '';
+    const img = p.image_url || '';
+    const thumbHtml = img
+      ? `<img src="${escapeHtml(img)}" alt="">`
+      : `<div class="no-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m21 15-5-5L5 21"/></svg></div>`;
+    return `
+      <tr>
+        <td class="thumb">${thumbHtml}</td>
+        <td><b>${escapeHtml(p.name_ar)}</b><br><span style="color:#6b6154; font-size:12.5px;">${escapeHtml(p.name_en||'')}</span></td>
+        <td>${markupLabel}${overrideNote}</td>
+        <td><b>${priceLabel}</b></td>
+        <td><span class="badge ${p.is_available ? 'on':'off'}">${p.is_available ? 'متاح' : 'مخفي'}</span></td>
+        <td>${p.sort_order ?? ''}</td>
+        <td>
+          <div class="row-actions">
+            <button class="icon-btn" data-edit='${JSON.stringify(p).replace(/'/g, "&#39;")}'>تعديل</button>
+            <button class="icon-btn danger" data-del="${p.id}" data-name="${escapeHtml(p.name_ar)}">حذف</button>
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  // ---------- MODAL ----------
+  const overlay = document.getElementById('modalOverlay');
+  const form = document.getElementById('productForm');
+
+  function openModal(p){
+    document.getElementById('modalTitle').textContent = p ? 'تعديل صنف' : 'إضافة صنف';
+    document.getElementById('productId').value = p?.id || '';
+    document.getElementById('nameAr').value = p?.name_ar || '';
+    document.getElementById('nameEn').value = p?.name_en || '';
+    document.getElementById('markupType').value = p?.markup_type || 'fixed';
+    document.getElementById('markupValue').value = p?.markup_value ?? 0;
+    document.getElementById('price').value = (p?.price ?? '') === null ? '' : (p?.price ?? '');
+    document.getElementById('sortOrder').value = p?.sort_order ?? 1;
+    document.getElementById('imageUrl').value = p?.image_url || '';
+    document.getElementById('isAvailable').checked = p ? !!p.is_available : true;
+    document.getElementById('imgFile').value = '';
+    document.getElementById('uploadStatus').textContent = 'JPG أو PNG، حد أقصى 5 ميجا';
+    document.getElementById('uploadStatus').className = 'hint';
+    const preview = document.getElementById('imgPreview');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    if (p?.image_url){
+      preview.src = p.image_url;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      preview.src = '';
+      preview.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
+    overlay.classList.add('show');
+  }
+  function closeModal(){ overlay.classList.remove('show'); form.reset(); }
+
+  document.getElementById('addBtn').addEventListener('click', ()=> openModal(null));
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e)=>{ if (e.target === overlay) closeModal(); });
+
+  // ---------- IMAGE UPLOAD ----------
+  document.getElementById('imgFile').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024){
+      showToast('الصورة أكبر من 5 ميجا');
+      e.target.value = '';
+      return;
+    }
+
+    const preview = document.getElementById('imgPreview');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const status = document.getElementById('uploadStatus');
+
+    // instant local preview while uploading
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+    status.textContent = 'بيتم الرفع...';
+    status.className = 'hint upload-status-msg';
+
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `${crypto.randomUUID()}.${ext}`;
+
+    const { error: upErr } = await sb.storage.from('product-images').upload(path, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+    if (upErr){
+      status.textContent = 'حصل خطأ في الرفع، جرب تاني';
+      status.className = 'hint';
+      showToast('فشل رفع الصورة');
+      return;
+    }
+
+    const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
+    document.getElementById('imageUrl').value = pub.publicUrl;
+    status.textContent = 'اترفعت بنجاح';
+    status.className = 'hint upload-status-msg';
+  });
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.disabled = true; saveBtn.textContent = 'بيتم الحفظ...';
+
+    const id = document.getElementById('productId').value;
+    const priceVal = document.getElementById('price').value;
+    const payload = {
+      name_ar: document.getElementById('nameAr').value.trim(),
+      name_en: document.getElementById('nameEn').value.trim(),
+      price: priceVal === '' ? null : Number(priceVal),
+      markup_type: document.getElementById('markupType').value,
+      markup_value: Number(document.getElementById('markupValue').value) || 0,
+      sort_order: Number(document.getElementById('sortOrder').value) || 0,
+      image_url: document.getElementById('imageUrl').value.trim(),
+      is_available: document.getElementById('isAvailable').checked,
+    };
+
+    let error;
+    if (id){
+      ({ error } = await sb.from('products').update(payload).eq('id', id));
+    } else {
+      ({ error } = await sb.from('products').insert(payload));
+    }
+    saveBtn.disabled = false; saveBtn.textContent = 'حفظ';
+
+    if (error){
+      showToast('حصل خطأ، جرب تاني');
+      return;
+    }
+    closeModal();
+    showToast('اتحفظ بنجاح');
+    loadProducts();
+  });
+
+  async function deleteProduct(id, name){
+    if (!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error){ showToast('حصل خطأ في الحذف'); return; }
+    showToast('اتشال');
+    loadProducts();
+  }
+
+  checkSession();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قائمة الأسعار | Fresh Zone</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#030C13; --navy2:#081826; --blue:#0665BD; --blue-light:#3E8FD9;
+    --cream:#F4EEE2; --ink:#1C1710; --gold:#E6B25A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Tajawal', sans-serif; background:var(--cream); color:#fff;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:28px 16px 60px;
+  }
+  .toolbar{
+    width:100%; max-width:460px; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .toolbar a{color:var(--ink); font-size:14px; font-weight:700; text-decoration:none;}
+  .dl-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--blue); color:#fff; border:none; padding:11px 20px;
+    border-radius:999px; font-family:inherit; font-weight:800; font-size:14.5px; cursor:pointer;
+    box-shadow:0 8px 22px rgba(6,101,189,.3);
+  }
+  .dl-btn:hover{background:#0A7AE0;}
+  .dl-btn svg{width:18px; height:18px;}
+  .dl-btn:disabled{opacity:.6; cursor:default;}
+
+  #poster{
+    width:100%; max-width:460px; background:var(--navy);
+    border-radius:22px; overflow:hidden; position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+  }
+  .swirl{position:absolute; inset:0; opacity:.5; pointer-events:none;}
+
+  .badge-wrap{padding:36px 20px 14px; text-align:center; position:relative;}
+  .badge-wrap img{height:56px; margin:0 auto 10px;}
+  .badge-wrap h1{font-size:26px; font-weight:900; letter-spacing:.5px;}
+  .badge-wrap h1 span{color:var(--blue-light);}
+  .badge-wrap .ar-name{font-size:14px; color:rgba(255,255,255,.65); margin-top:2px;}
+  .tagline-bar{
+    background:var(--blue); margin-top:14px; padding:8px; text-align:center;
+    font-size:12.5px; font-weight:700; letter-spacing:.3px;
+  }
+  .tagline-bar .sub{font-size:11px; font-weight:500; opacity:.85; display:block; margin-top:1px;}
+
+  .trust-row{display:flex; justify-content:center; gap:26px; padding:16px 10px 6px;}
+  .trust-row div{text-align:center; font-size:10px; color:rgba(255,255,255,.6); width:70px;}
+  .trust-row svg{width:22px; height:22px; color:var(--blue-light); margin-bottom:4px;}
+
+  .list-title{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:16px 10px 12px; font-size:19px; font-weight:900;
+  }
+  .list-title .en{color:var(--blue-light);}
+  .list-title .divider{width:1px; height:18px; background:rgba(255,255,255,.3);}
+
+  .date-row{text-align:center; font-size:12px; color:var(--gold); font-weight:700; padding-bottom:10px;}
+
+  table.plist{width:100%; border-collapse:collapse; padding:0 14px;}
+  .thead-row{background:var(--blue);}
+  .thead-row th{padding:9px 14px; font-size:11.5px; font-weight:700;}
+  .thead-row th span{display:block; font-size:9.5px; font-weight:500; opacity:.85;}
+
+  .prow td{padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:middle;}
+  .prow:last-child td{border-bottom:none;}
+  .prow .pimg{
+    width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid var(--blue-light);
+    flex-shrink:0;
+  }
+  .prow .pimg img{width:100%; height:100%; object-fit:cover;}
+  .prow .pname{display:flex; align-items:center; gap:10px;}
+  .prow .pname b{font-size:13.5px; font-weight:800; display:block;}
+  .prow .pname span{font-size:9.5px; color:var(--blue-light); font-weight:600;}
+  .prow .pprice{text-align:left; white-space:nowrap;}
+  .prow .pprice b{font-size:14px; font-weight:900; color:#fff;}
+  .prow .pprice small{font-size:9px; color:rgba(255,255,255,.5); display:block;}
+  .prow .pprice .tbd{font-size:11px; color:var(--gold); font-weight:700;}
+
+  .footer-trust{display:flex; justify-content:center; gap:18px; padding:18px 10px 6px; flex-wrap:wrap;}
+  .footer-trust div{display:flex; align-items:center; gap:5px; font-size:9.5px; color:rgba(255,255,255,.6);}
+  .footer-trust svg{width:14px; height:14px; color:var(--blue-light);}
+
+  .footer-tag{text-align:center; padding:10px 10px 26px; font-size:13px; font-weight:800; color:var(--gold);}
+  .footer-tag .en{display:block; font-size:9.5px; color:rgba(255,255,255,.5); font-weight:500; margin-top:1px;}
+
+  .wa-strip{
+    background:var(--navy2); text-align:center; padding:12px; font-size:12px;
+    color:rgba(255,255,255,.7); border-top:1px solid rgba(255,255,255,.08);
+  }
+  .wa-strip b{color:#fff;}
+
+  @media (max-width:480px){
+    #poster{border-radius:0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="admin.html">لوحة التحكم</a>
+  <button class="dl-btn" id="downloadBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+    تحميل الصورة
+  </button>
+</div>
+
+<div id="poster">
+  <div class="badge-wrap">
+    <img src="assets/icon-white.png" alt="Fresh Zone">
+    <h1>FRESH<span>ZONE</span></h1>
+    <div class="ar-name">فريش زون</div>
+  </div>
+  <div class="tagline-bar">
+    FRESH CHICKEN
+    <span>دواجن طازجة</span>
+  </div>
+
+  <div class="trust-row">
+    <div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C9 6 6 8.5 6 13a6 6 0 0 0 12 0c0-4.5-3-7-6-11Z"/></svg>
+      100% طازج
+    </div>
+    <div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/></svg>
+      جودة عالية
+    </div>
+    <div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/></svg>
+      إبقاء طازج
+    </div>
+  </div>
+
+  <div class="list-title">
+    <span>قائمة الأسعار</span>
+    <span class="divider"></span>
+    <span class="en">PRICE LIST</span>
+  </div>
+  <div class="date-row" id="dateRow"></div>
+
+  <table class="plist">
+    <thead>
+      <tr class="thead-row">
+        <th style="text-align:right;">المنتج<span>PRODUCT</span></th>
+        <th style="text-align:left;">السعر/كجم<span>PRICE/KG</span></th>
+      </tr>
+    </thead>
+    <tbody id="plistBody">
+      <tr><td colspan="2" style="text-align:center; padding:30px; font-size:13px; color:rgba(255,255,255,.5);">بيتم التحميل...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-trust">
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> جودة مضمونة</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/></svg> طازج يومياً</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/></svg> نظافة وأمان</div>
+  </div>
+  <div class="footer-tag">طازج لكل يوم<span class="en">FRESH EVERY DAY</span></div>
+  <div class="wa-strip">للطلب: <b>01027572394</b> — واتساب</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  const SUPA_URL = 'https://gnlvytjcryizrkckpgtx.supabase.co';
+  const SUPA_KEY = 'sb_publishable_6Dgu7fTMdr1mqrUsHiiEQQ_GXZOXi91';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  function escapeHtml(str){
+    return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  const todayStr = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('dateRow').textContent = 'أسعار يوم ' + todayStr;
+
+  function computeFinalPrice(p, basePrice){
+    if (p.price !== null && p.price !== undefined) return Number(p.price);
+    if (basePrice === null || basePrice === undefined) return null;
+    const base = Number(basePrice);
+    const mv = Number(p.markup_value || 0);
+    return p.markup_type === 'percent' ? base * (1 + mv/100) : base + mv;
+  }
+
+  function rowHtml(p, basePrice){
+    const final = computeFinalPrice(p, basePrice);
+    const priceHtml = final !== null
+      ? `<b>${final.toLocaleString('ar-EG', {maximumFractionDigits:2})}</b><small>ج.م</small>`
+      : `<span class="tbd">قريباً</span>`;
+    const img = p.image_url || 'assets/hero.jpg';
+    return `
+      <tr class="prow">
+        <td>
+          <div class="pname">
+            <div class="pimg"><img src="${escapeHtml(img)}" alt=""></div>
+            <div>
+              <b>${escapeHtml(p.name_ar)}</b>
+              <span>${escapeHtml(p.name_en || '')}</span>
+            </div>
+          </div>
+        </td>
+        <td class="pprice">${priceHtml}</td>
+      </tr>`;
+  }
+
+  async function loadList(){
+    const body = document.getElementById('plistBody');
+    try {
+      const [{ data: settings }, { data: products, error }] = await Promise.all([
+        sb.from('market_settings').select('*').eq('id',1).single(),
+        sb.from('products').select('*').eq('is_available', true).order('sort_order', { ascending:true })
+      ]);
+
+      if (error || !products || products.length === 0){
+        body.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:30px; font-size:13px; color:rgba(255,255,255,.5);">مفيش أصناف متاحة دلوقتي</td></tr>';
+        return;
+      }
+      const basePrice = settings ? settings.base_price : null;
+      body.innerHTML = products.map(p => rowHtml(p, basePrice)).join('');
+    } catch (e) {
+      console.warn('Fresh Zone price list: failed to load', e);
+      body.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:30px; font-size:13px; color:rgba(255,255,255,.5);">تعذّر تحميل الأسعار، حاول تفتح الصفحة تاني</td></tr>';
+    }
+  }
+
+  document.getElementById('downloadBtn').addEventListener('click', async ()=>{
+    const btn = document.getElementById('downloadBtn');
+    btn.disabled = true;
+    const originalHtml = btn.innerHTML;
+    btn.textContent = 'بيتم التجهيز...';
+    try {
+      const canvas = await html2canvas(document.getElementById('poster'), {
+        backgroundColor: '#030C13',
+        scale: 2,
+        useCORS: true
+      });
+      const link = document.createElement('a');
+      const dateSlug = new Date().toISOString().slice(0,10);
+      link.download = `fresh-zone-price-list-${dateSlug}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e){
+      alert('حصلت مشكلة في تجهيز الصورة، جرب تاني.');
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+  });
+
+  loadList();
+</script>
+
+</body>
+</html>
