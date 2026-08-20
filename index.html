@@ -284,26 +284,26 @@
   }
 
   #poster .prow{
-    display:flex; align-items:center; gap:7px; padding:7px 9px;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px; padding:8px 6px;
     background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px;
     min-width:0;
   }
   #poster .prow .pphoto{
-    width:36px; height:36px; border-radius:9px; overflow:hidden; flex-shrink:0;
+    width:100%; height:58px; border-radius:9px; overflow:hidden; flex-shrink:0;
     border:1.5px solid rgba(255,255,255,.1); background:#0c1c2b;
   }
   #poster .prow .pphoto img{width:100%; height:100%; object-fit:cover; display:block;}
-  #poster .prow .pinfo{flex:1; min-width:0;}
-  #poster .prow .pinfo .nm{font-size:11px; font-weight:800; color:#fff; line-height:1.25; overflow-wrap:break-word;}
-  #poster .prow .pinfo .en{font-size:7.5px; font-weight:700; color:var(--blue-light); letter-spacing:normal; margin-top:1px; line-height:1.25; overflow-wrap:break-word; direction:ltr; text-align:right;}
+  #poster .prow .pinfo{min-width:0; width:100%;}
+  #poster .prow .pinfo .nm{font-size:11.5px; font-weight:800; color:#fff; line-height:1.25; overflow-wrap:break-word;}
+  #poster .prow .pinfo .en{font-size:7.5px; font-weight:700; color:var(--blue-light); letter-spacing:normal; margin-top:2px; line-height:1.25; overflow-wrap:break-word; direction:ltr;}
   #poster .prow:last-child:nth-child(odd){grid-column:1 / -1;}
   #poster .prow .pprice-box{
-    background:var(--cream); border-radius:9px; padding:5px 7px; text-align:center;
-    min-width:46px; flex-shrink:0;
+    background:var(--cream); border-radius:9px; padding:4px 10px; text-align:center;
+    display:inline-flex; align-items:baseline; gap:4px;
   }
-  #poster .prow .pprice-box .val{font-size:11px; font-weight:900; color:var(--navy); letter-spacing:.2px; display:block; line-height:1.15;}
+  #poster .prow .pprice-box .val{font-size:12px; font-weight:900; color:var(--navy); letter-spacing:.2px;}
   #poster .prow .pprice-box .val.dots{font-size:10px; font-weight:800; letter-spacing:2px; color:rgba(28,23,16,.32);}
-  #poster .prow .pprice-box .unit{font-size:6.5px; font-weight:800; color:var(--blue); margin-top:1px; letter-spacing:normal;}
+  #poster .prow .pprice-box .unit{font-size:8px; font-weight:800; color:var(--blue); letter-spacing:normal;}
 
   #poster .footer-trust{display:flex; justify-content:center; gap:10px; padding:14px 10px 4px; flex-wrap:wrap;}
   #poster .footer-trust div{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:8.5px; color:rgba(255,255,255,.6); font-weight:700; width:82px; text-align:center;}
