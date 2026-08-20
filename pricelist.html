@@ -106,26 +106,27 @@
   }
 
   .prow{
-    display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px; padding:8px 6px;
+    display:grid; grid-template-columns:38px 1fr; grid-template-areas:"photo info" "price price";
+    gap:3px 7px; align-items:center; padding:7px 8px;
     background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px;
     min-width:0;
   }
   .prow .pphoto{
-    width:100%; height:58px; border-radius:9px; overflow:hidden; flex-shrink:0;
+    grid-area:photo; width:38px; height:38px; border-radius:8px; overflow:hidden;
     border:1.5px solid rgba(255,255,255,.1); background:#0c1c2b;
   }
   .prow .pphoto img{width:100%; height:100%; object-fit:cover; display:block;}
-  .prow .pinfo{min-width:0; width:100%;}
-  .prow .pinfo .nm{font-size:11.5px; font-weight:800; color:#fff; line-height:1.25; overflow-wrap:break-word;}
-  .prow .pinfo .en{font-size:7.5px; font-weight:700; color:var(--blue-light); letter-spacing:normal; margin-top:2px; line-height:1.25; overflow-wrap:break-word; direction:ltr;}
+  .prow .pinfo{grid-area:info; min-width:0;}
+  .prow .pinfo .nm{font-size:10.5px; font-weight:800; color:#fff; line-height:1.25; overflow-wrap:break-word;}
+  .prow .pinfo .en{font-size:7px; font-weight:700; color:var(--blue-light); letter-spacing:normal; margin-top:1px; line-height:1.2; overflow-wrap:break-word; direction:ltr;}
   .prow:last-child:nth-child(odd){grid-column:1 / -1;}
   .prow .pprice-box{
-    background:var(--cream); border-radius:9px; padding:4px 10px; text-align:center;
-    display:inline-flex; align-items:baseline; gap:4px;
+    grid-area:price; background:var(--cream); border-radius:8px; padding:3px 8px; text-align:center;
+    display:flex; align-items:baseline; justify-content:center; gap:4px;
   }
-  .prow .pprice-box .val{font-size:12px; font-weight:900; color:var(--navy); letter-spacing:.2px;}
+  .prow .pprice-box .val{font-size:11px; font-weight:900; color:var(--navy); letter-spacing:.2px;}
   .prow .pprice-box .val.dots{font-size:10px; font-weight:800; letter-spacing:2px; color:rgba(28,23,16,.32);}
-  .prow .pprice-box .unit{font-size:8px; font-weight:800; color:var(--blue); letter-spacing:normal;}
+  .prow .pprice-box .unit{font-size:7px; font-weight:800; color:var(--blue); letter-spacing:normal;}
 
   .footer-trust{display:flex; justify-content:center; gap:10px; padding:14px 10px 4px; flex-wrap:wrap;}
   .footer-trust div{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:8.5px; color:rgba(255,255,255,.6); font-weight:700; width:82px; text-align:center;}
