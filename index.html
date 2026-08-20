@@ -284,22 +284,24 @@
   }
 
   #poster .prow{
-    display:grid; grid-template-columns:38px 1fr; grid-template-areas:"photo info" "price price";
-    gap:3px 7px; align-items:center; padding:7px 8px;
+    display:flex; flex-direction:column; gap:5px; padding:7px 8px;
     background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px;
     min-width:0;
   }
+  #poster .prow .ptop{
+    display:flex; align-items:center; gap:7px; min-width:0;
+  }
   #poster .prow .pphoto{
-    grid-area:photo; width:38px; height:38px; border-radius:8px; overflow:hidden;
+    width:38px; height:38px; border-radius:8px; overflow:hidden; flex-shrink:0;
     border:1.5px solid rgba(255,255,255,.1); background:#0c1c2b;
   }
   #poster .prow .pphoto img{width:100%; height:100%; object-fit:cover; display:block;}
-  #poster .prow .pinfo{grid-area:info; min-width:0;}
+  #poster .prow .pinfo{flex:1; min-width:0;}
   #poster .prow .pinfo .nm{font-size:10.5px; font-weight:800; color:#fff; line-height:1.25; overflow-wrap:break-word;}
   #poster .prow .pinfo .en{font-size:7px; font-weight:700; color:var(--blue-light); letter-spacing:normal; margin-top:1px; line-height:1.2; overflow-wrap:break-word; direction:ltr;}
   #poster .prow:last-child:nth-child(odd){grid-column:1 / -1;}
   #poster .prow .pprice-box{
-    grid-area:price; background:var(--cream); border-radius:8px; padding:3px 8px; text-align:center;
+    background:var(--cream); border-radius:8px; padding:3px 8px; text-align:center;
     display:flex; align-items:baseline; justify-content:center; gap:4px;
   }
   #poster .prow .pprice-box .val{font-size:11px; font-weight:900; color:var(--navy); letter-spacing:.2px;}
@@ -701,10 +703,12 @@
     const img = p.image_url || 'assets/hero.jpg';
     return `
       <div class="prow">
-        <div class="pphoto"><img src="${escapeHtml(img)}" alt=""></div>
-        <div class="pinfo">
-          <div class="nm">${escapeHtml(p.name_ar)}</div>
-          <div class="en">${escapeHtml(p.name_en || '')}</div>
+        <div class="ptop">
+          <div class="pphoto"><img src="${escapeHtml(img)}" alt=""></div>
+          <div class="pinfo">
+            <div class="nm">${escapeHtml(p.name_ar)}</div>
+            <div class="en">${escapeHtml(p.name_en || '')}</div>
+          </div>
         </div>
         <div class="pprice-box">${priceHtml}</div>
       </div>`;
