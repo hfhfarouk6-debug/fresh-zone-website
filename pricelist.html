@@ -3,326 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>قائمة الأسعار | Fresh Zone</title>
+<title>قائمة أسعار اليوم | Fresh Zone فريش زون</title>
+<meta name="description" content="قائمة أسعار فريش زون محدّثة يومياً حسب سعر البورصة. نزّلها كصورة وابعتها على واتساب.">
+<link rel="canonical" href="https://freshzonecairo.com/pricelist.html">
+<meta name="theme-color" content="#F4EEE2">
+<link rel="icon" href="assets/icon-white.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:site_name" content="Fresh Zone | فريش زون">
+<meta property="og:title" content="قائمة أسعار اليوم | Fresh Zone فريش زون">
+<meta property="og:description" content="أسعار الدواجن الطازجة محدّثة يومياً — جاردنيا سيتي، مدينة نصر.">
+<meta property="og:image" content="https://freshzonecairo.com/assets/hero.jpg">
+<meta property="og:url" content="https://freshzonecairo.com/pricelist.html">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/poster.css">
 <style>
-  :root{
-    --navy:#030C13; --navy2:#081826; --blue:#0665BD; --blue-light:#3E8FD9;
-    --cream:#F4EEE2; --ink:#1C1710; --gold:#E6B25A;
-  }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    font-family:'Tajawal', sans-serif; background:var(--cream); color:#fff;
-    min-height:100vh; display:flex; flex-direction:column; align-items:center;
-    padding:28px 16px 60px;
+    font-family:'Tajawal', sans-serif;
+    background:var(--cream);
+    color:var(--ink);          /* was #fff on cream - invisible */
+    line-height:1.7;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
   }
-  .toolbar{
-    width:100%; max-width:460px; display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:18px;
-  }
-  .toolbar a{color:var(--ink); font-size:14px; font-weight:700; text-decoration:none;}
-  .dl-btn{
-    display:inline-flex; align-items:center; gap:8px;
-    background:var(--blue); color:#fff; border:none; padding:11px 20px;
-    border-radius:999px; font-family:inherit; font-weight:800; font-size:14.5px; cursor:pointer;
-    box-shadow:0 8px 22px rgba(6,101,189,.3);
-  }
-  .dl-btn:hover{background:#0A7AE0;}
-  .dl-btn svg{width:18px; height:18px;}
-  .dl-btn:disabled{opacity:.6; cursor:default;}
+  img{display:block; max-width:100%;}
+  a{color:inherit;}
+  button,input{font:inherit; color:inherit;}
 
-  #poster{
-    width:100%; max-width:460px;
-    background:
-      radial-gradient(ellipse 120% 55% at 50% -8%, #0d2c4a 0%, rgba(13,44,74,0) 60%),
-      radial-gradient(ellipse 90% 40% at 50% 108%, #0d2c4a 0%, rgba(13,44,74,0) 60%),
-      linear-gradient(180deg, #04121e 0%, #020a11 55%, #000 100%);
-    border-radius:24px; overflow:hidden; position:relative;
-    box-shadow:0 24px 60px rgba(0,0,0,.35);
-    border:1px solid rgba(62,143,217,.25);
-  }
-  .corner-swirl{position:absolute; width:130px; height:130px; opacity:.55; pointer-events:none;}
-  .corner-swirl.tl{top:-6px; left:-6px;}
-  .corner-swirl.tr{top:-6px; right:-6px; transform:scaleX(-1);}
-  .corner-swirl.bl{bottom:-6px; left:-6px; transform:scaleY(-1);}
-  .corner-swirl.br{bottom:-6px; right:-6px; transform:scale(-1,-1);}
+  .page{max-width:520px; margin:0 auto; padding:var(--s-6) var(--s-4) var(--s-16);}
+  /* no padding of its own: poster.js measures this element to size the
+     poster, and padding here would make it overflow on small screens. */
+  .poster-holder{width:100%;}
 
-  .shield-wrap{padding:22px 20px 4px; text-align:center; position:relative;}
-  .shield{
-    width:220px; margin:0 auto; position:relative;
-    border-radius:18px;
-    background:linear-gradient(160deg, var(--blue-light), var(--blue) 45%, #033a73 100%);
-    padding:2px;
-    box-shadow:0 12px 28px rgba(0,0,0,.35);
+  .bar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:var(--s-4); margin-bottom:var(--s-5); flex-wrap:wrap;
   }
-  .shield-inner{
-    border-radius:16px;
-    background:radial-gradient(ellipse at 50% 0%, #0c2a44 0%, #030c13 70%), #030c13;
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding:22px 18px 20px;
+  .home-link{
+    display:inline-flex; align-items:center; gap:var(--s-2);
+    font-size:var(--t-base); font-weight:700; color:var(--ink);
+    text-decoration:none;
   }
-  .shield-inner img{height:34px; margin-bottom:8px; opacity:.95;}
-  .premium-tag{font-size:8px; letter-spacing:2.5px; color:rgba(255,255,255,.55); font-weight:700; margin-bottom:6px;}
-  .brand-word{font-size:23px; font-weight:900; letter-spacing:.3px; color:#fff; line-height:1;}
-  .brand-word span{color:var(--blue-light);}
-  .brand-ar{font-size:12.5px; color:rgba(255,255,255,.6); margin-top:3px; font-weight:500;}
+  .home-link:hover{color:var(--blue);}
+  .home-link svg{width:16px; height:16px;}
+  .poster-toolbar{margin:0;}
 
-  .ribbon{
-    position:relative; display:inline-flex; flex-direction:column; align-items:center;
-    background:var(--blue); color:#fff; padding:7px 30px 6px; margin-top:12px;
-    font-size:11.5px; font-weight:800; letter-spacing:.4px; z-index:2;
-    box-shadow:0 6px 16px rgba(6,101,189,.35);
-    border-radius:6px;
+  .page-note{
+    text-align:center; margin-top:var(--s-6);
+    font-size:var(--t-sm); color:var(--ink-soft);
   }
-  .ribbon::before, .ribbon::after{
-    content:''; position:absolute; top:0; width:0; height:0;
-    border-top:19px solid #033a73;
-  }
-  .ribbon::before{left:-11px; border-left:11px solid transparent;}
-  .ribbon::after{right:-11px; border-right:11px solid transparent;}
-  .ribbon .sub{font-size:10px; font-weight:500; opacity:.85; margin-top:1px; letter-spacing:normal;}
-
-  .mini-badges{display:flex; justify-content:center; gap:22px; padding:10px 10px 2px;}
-  .mini-badges div{display:flex; flex-direction:column; align-items:center; gap:5px; width:76px;}
-  .mini-badges .ic{
-    width:34px; height:34px; border-radius:50%; border:1.4px solid var(--blue-light);
-    display:flex; align-items:center; justify-content:center; color:var(--blue-light);
-  }
-  .mini-badges svg{width:16px; height:16px;}
-  .mini-badges b{font-size:8.6px; font-weight:800; color:#fff; letter-spacing:.2px;}
-  .mini-badges span{font-size:8px; color:rgba(255,255,255,.55); font-weight:500;}
-
-  .list-title{
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    padding:14px 10px 3px; font-size:18px; font-weight:900;
-  }
-  .list-title .en{color:var(--blue-light);}
-  .list-title .divider{width:1px; height:18px; background:rgba(255,255,255,.3);}
-
-  .date-row{text-align:center; font-size:11px; color:var(--gold); font-weight:700; padding-bottom:8px;}
-
-  .plist{
-    margin:0 16px; display:grid; grid-template-columns:1fr 1fr; gap:8px;
-  }
-
-  .prow{
-    display:flex; flex-direction:column; gap:5px; padding:7px 8px;
-    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px;
-    min-width:0;
-  }
-  .prow .ptop{
-    display:flex; align-items:center; gap:7px; min-width:0;
-  }
-  .prow .pphoto{
-    width:38px; height:38px; border-radius:8px; overflow:hidden; flex-shrink:0;
-    border:1.5px solid rgba(255,255,255,.1); background:#0c1c2b;
-  }
-  .prow .pphoto img{width:100%; height:100%; object-fit:cover; display:block;}
-  .prow .pinfo{flex:1; min-width:0;}
-  .prow .pinfo .nm{font-size:10.5px; font-weight:800; color:#fff; line-height:1.25; overflow-wrap:break-word;}
-  .prow .pinfo .en{font-size:7px; font-weight:700; color:var(--blue-light); letter-spacing:normal; margin-top:1px; line-height:1.2; overflow-wrap:break-word; direction:ltr;}
-  .prow:last-child:nth-child(odd){grid-column:1 / -1;}
-  .prow .pprice-box{
-    background:var(--cream); border-radius:8px; padding:0 10px; text-align:center;
-    height:27px; line-height:27px; white-space:nowrap; overflow:hidden;
-  }
-  .prow .pprice-box .val{font-size:15px; font-weight:900; color:var(--navy); letter-spacing:.2px; position:relative; top:-2px;}
-  .prow .pprice-box .val.dots{font-size:13px; font-weight:800; letter-spacing:2px; color:rgba(28,23,16,.32);}
-  .prow .pprice-box .unit{font-size:9px; font-weight:800; color:var(--blue); letter-spacing:normal; margin-inline-start:4px; position:relative; top:-2px;}
-
-  .footer-trust{display:flex; justify-content:center; gap:10px; padding:14px 10px 4px; flex-wrap:wrap;}
-  .footer-trust div{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:8.5px; color:rgba(255,255,255,.6); font-weight:700; width:82px; text-align:center;}
-  .footer-trust .ic{width:26px; height:26px; border-radius:50%; background:rgba(62,143,217,.12); border:1px solid rgba(62,143,217,.4); display:flex; align-items:center; justify-content:center;}
-  .footer-trust svg{width:13px; height:13px; color:var(--blue-light);}
-
-  .footer-tag{text-align:center; padding:8px 10px 16px; font-size:13px; font-weight:800; color:var(--gold);}
-  .footer-tag .en{display:block; font-size:8.5px; color:rgba(255,255,255,.45); font-weight:500; margin-top:2px; letter-spacing:.5px;}
-
-  .wa-strip{
-    background:var(--navy2); text-align:center; padding:10px; font-size:11px;
-    color:rgba(255,255,255,.7); border-top:1px solid rgba(255,255,255,.08);
-  }
-  .wa-strip b{color:#fff;}
-
-  @media (max-width:480px){
-    #poster{border-radius:0;}
-  }
+  .page-note a{color:var(--blue); font-weight:700;}
 </style>
 </head>
 <body>
 
-<div class="toolbar">
-  <a href="admin.html">لوحة التحكم</a>
-  <button class="dl-btn" id="downloadBtn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m0 0-4-4m4 4 4-4M5 21h14"/></svg>
-    تحميل الصورة
-  </button>
-</div>
+<div class="page">
 
-<div id="poster">
-  <svg class="corner-swirl tl" viewBox="0 0 200 200"><defs><linearGradient id="g1" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3E8FD9" stop-opacity="0"/><stop offset="1" stop-color="#3E8FD9" stop-opacity=".9"/></linearGradient></defs><path d="M6,150 C6,70 70,6 150,6" stroke="url(#g1)" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M6,110 C6,50 50,6 110,6" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".6"/></svg>
-  <svg class="corner-swirl tr" viewBox="0 0 200 200"><path d="M6,150 C6,70 70,6 150,6" stroke="url(#g1)" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M6,110 C6,50 50,6 110,6" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".6"/></svg>
-  <svg class="corner-swirl bl" viewBox="0 0 200 200"><path d="M6,150 C6,70 70,6 150,6" stroke="url(#g1)" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M6,110 C6,50 50,6 110,6" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".6"/></svg>
-  <svg class="corner-swirl br" viewBox="0 0 200 200"><path d="M6,150 C6,70 70,6 150,6" stroke="url(#g1)" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M6,110 C6,50 50,6 110,6" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".6"/></svg>
-
-  <div class="shield-wrap">
-    <div class="shield">
-      <div class="shield-inner">
-        <img src="assets/icon-white.png" alt="Fresh Zone">
-        <div class="premium-tag">· PREMIUM QUALITY ·</div>
-        <div class="brand-word">FRESH<span>ZONE</span></div>
-        <div class="brand-ar">فريش زون</div>
-      </div>
+  <div class="bar">
+    <a class="home-link" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M3 11.5 12 4l9 7.5M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg>
+      الصفحة الرئيسية
+    </a>
+    <div class="poster-toolbar">
+      <button class="dl-btn" id="downloadBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 3v13m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+        تحميل الصورة
+      </button>
     </div>
-    <div class="ribbon">
-      FRESH CHICKEN
-      <span class="sub">دواجن طازجة</span>
+  </div>
+
+  <!-- Same builder as index.html (assets/js/poster.js), so the two pages
+       cannot drift apart again. -->
+  <div class="poster-holder">
+    <div class="poster-stage">
+      <div class="poster" id="poster"></div>
     </div>
-
-    <div class="mini-badges">
-      <div>
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C9 6 6 8.5 6 13a6 6 0 0 0 12 0c0-4.5-3-7-6-11Z"/></svg></div>
-        <b>100% FRESH</b><span>100% طازج</span>
-      </div>
-      <div>
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/></svg></div>
-        <b>HIGH QUALITY</b><span>جودة عالية</span>
-      </div>
-      <div>
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/></svg></div>
-        <b>KEEP FRESH</b><span>إبقاء طازج</span>
-      </div>
-    </div>
-
   </div>
 
-  <div class="list-title">
-    <span>قائمة الأسعار</span>
-    <span class="divider"></span>
-    <span class="en">PRICE LIST</span>
-  </div>
-  <div class="date-row" id="dateRow"></div>
+  <p class="page-note">
+    الأسعار محدّثة يومياً حسب سعر البورصة.
+    <a href="https://wa.me/201027572394?text=%D8%B9%D8%A7%D9%8A%D8%B2%20%D8%A3%D8%B7%D9%84%D8%A8%20%D9%85%D9%86%20%D9%81%D8%B1%D9%8A%D8%B4%20%D8%B2%D9%88%D9%86" target="_blank" rel="noopener">اطلب على واتساب</a>
+  </p>
 
-  <div class="plist" id="plistBody">
-    <div class="prow" style="grid-column:1 / -1;"><div class="pinfo" style="text-align:center; width:100%; padding:16px 0; color:rgba(255,255,255,.5); font-size:12px;">بيتم التحميل...</div></div>
-  </div>
-
-  <div class="footer-trust">
-    <div><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>جودة مضمونة<span style="opacity:.5; font-weight:500;">PREMIUM QUALITY</span></div>
-    <div><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M4.2 6.5l15.6 11M4.2 17.5l15.6-11"/></svg></div>طازج يومياً<span style="opacity:.5; font-weight:500;">FRESH DAILY</span></div>
-    <div><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5.5v5C4 15.5 7.4 19.7 12 21c4.6-1.3 8-5.5 8-10.5v-5L12 2Z"/></svg></div>نظافة وأمان<span style="opacity:.5; font-weight:500;">CLEAN & SAFE</span></div>
-  </div>
-  <div class="footer-tag">طازج لكل يوم<span class="en">FRESH EVERY DAY</span></div>
-  <div class="wa-strip">للطلب: <b>01281517707</b> / <b>01027572394</b> — واتساب</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/pricing.js"></script>
+<script src="assets/js/poster.js"></script>
 <script>
-  const SUPA_URL = 'https://gnlvytjcryizrkckpgtx.supabase.co';
-  const SUPA_KEY = 'sb_publishable_6Dgu7fTMdr1mqrUsHiiEQQ_GXZOXi91';
-  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-
-  function escapeHtml(str){
-    return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
-  const todayStr = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  document.getElementById('dateRow').textContent = 'أسعار يوم ' + todayStr;
-
-  const BASE_PRICE_BUFFER = 5; // عدد صحيح ثابت بيتضاف على سعر البورصة مباشرة (مش جنيه ومش نسبة) قبل حساب أي نسبة/إضافة لكل الأصناف
-  function computeFinalPrice(p, basePrice){
-    if (p.price !== null && p.price !== undefined) return Number(p.price);
-    if (basePrice === null || basePrice === undefined) return null;
-    const base = Number(basePrice) + BASE_PRICE_BUFFER;
-    const mv = Number(p.markup_value || 0);
-    return p.markup_type === 'percent' ? base * mv : base + mv;
-  }
-
-  const ICONS = {
-    breast: '<path d="M6 15c0-6 4-10 9-10s9 4 9 10-4 7-9 7-9-1-9-7Z"/><path d="M9 12c1-2 3-3 5-3"/>',
-    skewer: '<line x1="3" y1="12" x2="21" y2="12"/><rect x="7" y="9" width="4" height="6" rx="1"/><rect x="14" y="9" width="4" height="6" rx="1"/>',
-    leg: '<path d="M9 3c4 0 7 3 7 7 0 3-1.5 5-4 6l-4 5-2-2 5-4c-2-1-4-3-4-6 0-3 1-6 2-6Z"/>',
-    liver: '<path d="M5 12c0-4 3-7 7-7 3 0 5 2 5 5 0 2-1 3-3 3 2 1 3 3 3 5 0 3-2 4-5 4-4 0-7-4-7-10Z"/>',
-    gizzard: '<circle cx="12" cy="12" r="8"/><path d="M12 6c2 2 4 3 4 6s-2 4-4 6c-2-2-4-3-4-6s2-4 4-6Z"/>',
-    default: '<path d="M12 2C9 6 6 8.5 6 13a6 6 0 0 0 12 0c0-4.5-3-7-6-11Z"/>'
-  };
-  function getIcon(nameAr){
-    const n = String(nameAr || '');
-    let key = 'default';
-    if (n.includes('بانيه') || n.includes('صدور') || n.includes('صدر')) key = 'breast';
-    else if (n.includes('شيش') || n.includes('طاووق')) key = 'skewer';
-    else if (n.includes('وراك') || n.includes('فخذ')) key = 'leg';
-    else if (n.includes('كبد')) key = 'liver';
-    else if (n.includes('قوانص')) key = 'gizzard';
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[key]}</svg>`;
-  }
-
-  function rowHtml(p, basePrice){
-    const final = computeFinalPrice(p, basePrice);
-    const priceHtml = final !== null
-      ? `<span class="val">${final.toLocaleString('ar-EG', {maximumFractionDigits:2})}</span><span class="unit">ج.م</span>`
-      : `<span class="val dots">·····</span><span class="unit">ج.م</span>`;
-    const img = p.image_url || 'assets/hero.jpg';
-    return `
-      <div class="prow">
-        <div class="ptop">
-          <div class="pphoto"><img src="${escapeHtml(img)}" alt=""></div>
-          <div class="pinfo">
-            <div class="nm">${escapeHtml(p.name_ar)}</div>
-            <div class="en">${escapeHtml(p.name_en || '')}</div>
-          </div>
-        </div>
-        <div class="pprice-box">${priceHtml}</div>
-      </div>`;
-  }
-
-  async function loadList(){
-    const body = document.getElementById('plistBody');
-    try {
-      const [{ data: settings }, { data: products, error }] = await Promise.all([
-        sb.from('market_settings').select('*').eq('id',1).single(),
-        sb.from('products').select('*').eq('is_available', true).order('sort_order', { ascending:true })
-      ]);
-
-      if (error || !products || products.length === 0){
-        body.innerHTML = '<div class="prow"><div class="pinfo" style="text-align:center; width:100%; padding:20px 0; color:rgba(255,255,255,.5); font-size:13px;">مفيش أصناف متاحة دلوقتي</div></div>';
-        return;
-      }
-      const basePrice = settings ? settings.base_price : null;
-      body.innerHTML = products.map(p => rowHtml(p, basePrice)).join('');
-    } catch (e) {
-      console.warn('Fresh Zone price list: failed to load', e);
-      body.innerHTML = '<div class="prow"><div class="pinfo" style="text-align:center; width:100%; padding:20px 0; color:rgba(255,255,255,.5); font-size:13px;">تعذّر تحميل الأسعار، حاول تفتح الصفحة تاني</div></div>';
-    }
-  }
-
-  document.getElementById('downloadBtn').addEventListener('click', async ()=>{
-    const btn = document.getElementById('downloadBtn');
-    btn.disabled = true;
-    const originalHtml = btn.innerHTML;
-    btn.textContent = 'بيتم التجهيز...';
-    try {
-      const canvas = await html2canvas(document.getElementById('poster'), {
-        backgroundColor: '#030C13',
-        scale: 2,
-        useCORS: true
-      });
-      const link = document.createElement('a');
-      const dateSlug = new Date().toISOString().slice(0,10);
-      link.download = `fresh-zone-price-list-${dateSlug}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch (e){
-      alert('حصلت مشكلة في تجهيز الصورة، جرب تاني.');
-      console.error(e);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = originalHtml;
-    }
+  FZ.initPoster({
+    onWarn: function (text) { console.warn('Fresh Zone:', text); }
   });
-
-  loadList();
 </script>
 
 </body>
