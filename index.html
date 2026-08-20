@@ -226,7 +226,7 @@
   #poster .corner-swirl.bl{bottom:-6px; left:-6px; transform:scaleY(-1);}
   #poster .corner-swirl.br{bottom:-6px; right:-6px; transform:scale(-1,-1);}
 
-  #poster .shield-wrap{padding:34px 20px 6px; text-align:center; position:relative;}
+  #poster .shield-wrap{padding:22px 20px 4px; text-align:center; position:relative;}
   #poster .shield{
     width:220px; margin:0 auto; position:relative;
     border-radius:18px;
@@ -261,7 +261,7 @@
   #poster .ribbon::after{right:-11px; border-right:11px solid transparent;}
   #poster .ribbon .sub{font-size:10px; font-weight:500; opacity:.85; margin-top:1px; letter-spacing:normal;}
 
-  #poster .mini-badges{display:flex; justify-content:center; gap:22px; padding:16px 10px 4px;}
+  #poster .mini-badges{display:flex; justify-content:center; gap:22px; padding:10px 10px 2px;}
   #poster .mini-badges div{display:flex; flex-direction:column; align-items:center; gap:5px; width:76px;}
   #poster .mini-badges .ic{
     width:34px; height:34px; border-radius:50%; border:1.4px solid var(--blue-light);
@@ -273,52 +273,45 @@
 
   #poster .list-title{
     display:flex; align-items:center; justify-content:center; gap:10px;
-    padding:22px 10px 4px; font-size:20px; font-weight:900;
+    padding:14px 10px 3px; font-size:18px; font-weight:900;
   }
   #poster .list-title .en{color:var(--blue-light);}
   #poster .list-title .divider{width:1px; height:18px; background:rgba(255,255,255,.3);}
-  #poster .date-row{text-align:center; font-size:12px; color:var(--gold); font-weight:700; padding-bottom:14px;}
+  #poster .date-row{text-align:center; font-size:11px; color:var(--gold); font-weight:700; padding-bottom:8px;}
 
-  #poster .thead-row{
-    display:flex; align-items:center; justify-content:space-between;
-    background:linear-gradient(90deg, var(--blue), #044f95);
-    margin:0 16px; border-radius:10px 10px 0 0; padding:10px 16px;
+  #poster .plist{
+    margin:0 16px; display:grid; grid-template-columns:1fr 1fr; gap:8px;
   }
-  #poster .thead-row .l, #poster .thead-row .r{font-size:11.5px; font-weight:800; color:#fff;}
-  #poster .thead-row span{display:block; font-size:9px; font-weight:500; opacity:.85; margin-top:1px;}
 
-  #poster .plist{margin:0 16px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-top:none; border-radius:0 0 10px 10px; overflow:hidden;}
-
-  #poster .prow{display:flex; align-items:center; gap:11px; padding:13px 14px; border-bottom:1px solid rgba(255,255,255,.07);}
-  #poster .prow:last-child{border-bottom:none;}
-  #poster .prow .picon{
-    width:32px; height:32px; border-radius:50%; border:1.4px solid var(--blue-light);
-    display:flex; align-items:center; justify-content:center; color:var(--blue-light); flex-shrink:0;
+  #poster .prow{
+    display:flex; align-items:center; gap:7px; padding:7px 9px;
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px;
+    min-width:0;
   }
-  #poster .prow .picon svg{width:16px; height:16px;}
   #poster .prow .pphoto{
-    width:52px; height:52px; border-radius:14px; overflow:hidden; flex-shrink:0;
+    width:36px; height:36px; border-radius:9px; overflow:hidden; flex-shrink:0;
     border:1.5px solid rgba(255,255,255,.1); background:#0c1c2b;
   }
   #poster .prow .pphoto img{width:100%; height:100%; object-fit:cover; display:block;}
   #poster .prow .pinfo{flex:1; min-width:0;}
-  #poster .prow .pinfo .nm{font-size:15px; font-weight:800; color:#fff;}
-  #poster .prow .pinfo .en{font-size:10px; font-weight:700; color:var(--blue-light); letter-spacing:.3px; margin-top:2px;}
+  #poster .prow .pinfo .nm{font-size:11.5px; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #poster .prow .pinfo .en{font-size:7.5px; font-weight:700; color:var(--blue-light); letter-spacing:.2px; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; direction:ltr; text-align:right;}
+  #poster .prow:last-child:nth-child(odd){grid-column:1 / -1;}
   #poster .prow .pprice-box{
-    background:var(--cream); border-radius:12px; padding:8px 12px; text-align:center;
-    min-width:78px; flex-shrink:0;
+    background:var(--cream); border-radius:9px; padding:5px 7px; text-align:center;
+    min-width:46px; flex-shrink:0;
   }
-  #poster .prow .pprice-box .val{font-size:15px; font-weight:900; color:var(--navy); letter-spacing:.3px; display:block;}
-  #poster .prow .pprice-box .val.dots{font-size:13px; font-weight:800; letter-spacing:3px; color:rgba(28,23,16,.32);}
-  #poster .prow .pprice-box .unit{font-size:8px; font-weight:800; color:var(--blue); margin-top:2px; letter-spacing:normal;}
+  #poster .prow .pprice-box .val{font-size:11px; font-weight:900; color:var(--navy); letter-spacing:.2px; display:block; line-height:1.15;}
+  #poster .prow .pprice-box .val.dots{font-size:10px; font-weight:800; letter-spacing:2px; color:rgba(28,23,16,.32);}
+  #poster .prow .pprice-box .unit{font-size:6.5px; font-weight:800; color:var(--blue); margin-top:1px; letter-spacing:normal;}
 
-  #poster .footer-trust{display:flex; justify-content:center; gap:14px; padding:22px 10px 6px; flex-wrap:wrap;}
-  #poster .footer-trust div{display:flex; flex-direction:column; align-items:center; gap:6px; font-size:9px; color:rgba(255,255,255,.6); font-weight:700; width:88px; text-align:center;}
-  #poster .footer-trust .ic{width:32px; height:32px; border-radius:50%; background:rgba(62,143,217,.12); border:1px solid rgba(62,143,217,.4); display:flex; align-items:center; justify-content:center;}
-  #poster .footer-trust svg{width:16px; height:16px; color:var(--blue-light);}
-  #poster .footer-tag{text-align:center; padding:14px 10px 28px; font-size:14px; font-weight:800; color:var(--gold);}
-  #poster .footer-tag .en{display:block; font-size:9.5px; color:rgba(255,255,255,.45); font-weight:500; margin-top:2px; letter-spacing:.5px;}
-  #poster .wa-strip{background:var(--navy2, #081826); text-align:center; padding:13px; font-size:12px; color:rgba(255,255,255,.7); border-top:1px solid rgba(255,255,255,.08);}
+  #poster .footer-trust{display:flex; justify-content:center; gap:10px; padding:14px 10px 4px; flex-wrap:wrap;}
+  #poster .footer-trust div{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:8.5px; color:rgba(255,255,255,.6); font-weight:700; width:82px; text-align:center;}
+  #poster .footer-trust .ic{width:26px; height:26px; border-radius:50%; background:rgba(62,143,217,.12); border:1px solid rgba(62,143,217,.4); display:flex; align-items:center; justify-content:center;}
+  #poster .footer-trust svg{width:13px; height:13px; color:var(--blue-light);}
+  #poster .footer-tag{text-align:center; padding:8px 10px 16px; font-size:13px; font-weight:800; color:var(--gold);}
+  #poster .footer-tag .en{display:block; font-size:8.5px; color:rgba(255,255,255,.45); font-weight:500; margin-top:2px; letter-spacing:.5px;}
+  #poster .wa-strip{background:var(--navy2, #081826); text-align:center; padding:10px; font-size:11px; color:rgba(255,255,255,.7); border-top:1px solid rgba(255,255,255,.08);}
   #poster .wa-strip b{color:#fff;}
 
   /* ---------- HOW IT WORKS ---------- */
@@ -549,12 +542,8 @@
       </div>
       <div class="date-row" id="dateRow"></div>
 
-      <div class="thead-row">
-        <div class="r">المنتج<span>PRODUCT</span></div>
-        <div class="l">السعر / كجم<span>PRICE / KG</span></div>
-      </div>
       <div class="plist" id="plistBody">
-        <div class="prow"><div class="pinfo" style="text-align:center; width:100%; padding:20px 0; color:rgba(255,255,255,.5); font-size:13px;">بيتم التحميل...</div></div>
+        <div class="prow" style="grid-column:1 / -1;"><div class="pinfo" style="text-align:center; width:100%; padding:16px 0; color:rgba(255,255,255,.5); font-size:12px;">بيتم التحميل...</div></div>
       </div>
 
       <div class="footer-trust">
@@ -706,12 +695,11 @@
   function posterRowHtml(p, basePrice){
     const final = computeFinalPrice(p, basePrice);
     const priceHtml = final !== null
-      ? `<span class="val">${final.toLocaleString('ar-EG', {maximumFractionDigits:2})}</span><span class="unit">ج.م EGP</span>`
-      : `<span class="val dots">···········</span><span class="unit">ج.م EGP</span>`;
+      ? `<span class="val">${final.toLocaleString('ar-EG', {maximumFractionDigits:2})}</span><span class="unit">ج.م</span>`
+      : `<span class="val dots">·····</span><span class="unit">ج.م</span>`;
     const img = p.image_url || 'assets/hero.jpg';
     return `
       <div class="prow">
-        <div class="picon">${posterIcon(p.name_ar)}</div>
         <div class="pphoto"><img src="${escapeHtml(img)}" alt=""></div>
         <div class="pinfo">
           <div class="nm">${escapeHtml(p.name_ar)}</div>
