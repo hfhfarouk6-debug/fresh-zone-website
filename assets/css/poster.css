@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Fresh Zone - daily price-list poster.
+
+   CAPTURE-SAFE BY CONSTRUCTION.
+   This component is rasterised to PNG by html2canvas, which reproduces layout
+   faithfully (the browser lays out a clone) but repaints everything itself.
+   So it must only use PAINT features html2canvas reproduces exactly:
+
+     - NO box-shadow            (dropped entirely by html2canvas)
+     - NO object-fit            (not implemented; poster.js sets explicit
+                                 cover geometry on each <img> instead)
+     - NO elliptical radial-gradient  (approximated; circles are exact)
+     - NO inherited line-height (the two host pages disagreed and produced
+                                 posters ~40px different in height)
+     - NO letter-spacing on Arabic text (breaks cursive joining AND forces
+                                 html2canvas into per-grapheme rendering)
+     - NO overflow:hidden on text boxes with under 2px of headroom
+
+   The poster is ALWAYS laid out at exactly 460px. poster.js applies CSS zoom
+   to fit it to the available width, so the on-screen render and the exported
+   PNG share one identical layout at every viewport.
+
+   Selectors are CLASS-based on purpose: the export clones the poster and
+   drops its id (ids must stay unique), so any #id rule would silently not
+   apply to the copy that actually gets rasterised.
+   ========================================================================== */
+
+/* Scoped reset. The poster uses short generic class names that a host page
+   can easily reuse; a padding rule in the landing-page stylesheet once
+   leaked in and grew the poster footer by 192px. With poster.css loaded
+   last, this outranks any same-specificity page rule. */
+.poster, .poster *{ margin:0; padding:0; box-sizing:border-box; }
+
+.poster-stage{
+  width:460px;
+  margin-inline:auto;
+  transform-origin:top center;
+}
+/* Firefox < 126 has no `zoom`. Degrade to a fluid poster rather than
+   overflowing the viewport; export fidelity is unaffected either way, because
+   the export always clones at a fixed 460px. */
+@supports not (zoom:1){
+  .poster-stage{ width:100%; max-width:460px; }
+  .poster-stage .poster{ width:100%; }
+}
+
+.poster{
+  width:460px;
+  background:
+    radial-gradient(circle 400px at 50% -4%,  #0d2c4a 0%, rgba(13,44,74,0) 62%),
+    radial-gradient(circle 300px at 50% 104%, #0d2c4a 0%, rgba(13,44,74,0) 62%),
+    linear-gradient(180deg, #04121e 0%, #020a11 55%, #000 100%);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  position:relative;
+  color:#fff;
+  border:1px solid rgba(62,143,217,.25);
+  /* presentation only - falls outside the element box, so it is not part of
+     the exported pixels. */
+  box-shadow:0 24px 60px rgba(0,0,0,.35);
+  font-family:'Tajawal', sans-serif;
+  line-height:1.4;
+}
+
+/* ---------- corner swirls ----------
+   Each <svg> carries its OWN <defs> with a unique gradient id. html2canvas
+   serialises every inline svg into a separate standalone data: URI, so a
+   gradient defined in one svg and referenced by url(#id) from another
+   resolves to `none` and the stroke vanishes. That silently deleted three of
+   these four from every exported image. */
+/* No CSS mirror transforms here: the flip lives inside each svg as a
+   <g transform>, so it is part of the serialised document and never depends
+   on how html2canvas handles element transforms. */
+.poster .corner-swirl{position:absolute; display:block; width:130px; height:130px; opacity:.55; pointer-events:none;}
+.poster .corner-swirl.tl{top:-6px; left:-6px;}
+.poster .corner-swirl.tr{top:-6px; right:-6px;}
+.poster .corner-swirl.bl{bottom:-6px; left:-6px;}
+.poster .corner-swirl.br{bottom:-6px; right:-6px;}
+
+/* ---------- brand shield ---------- */
+.poster .shield-wrap{padding:22px 20px 4px; text-align:center; position:relative;}
+.poster .shield{
+  width:220px; margin:0 auto; position:relative;
+  border-radius:var(--r-lg);
+  background:linear-gradient(160deg, var(--blue-light), var(--blue) 45%, #033a73 100%);
+  padding:2px;
+}
+.poster .shield-inner{
+  border-radius:16px;
+  background:radial-gradient(circle 150px at 50% 0%, #0c2a44 0%, #030c13 70%), #030c13;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:22px 18px 20px;
+}
+.poster .shield-inner img{height:34px; width:auto; margin-bottom:8px; opacity:.95; display:block;}
+.poster .premium-tag{font-size:8px; line-height:1.4; letter-spacing:2.5px; color:rgba(255,255,255,.72); font-weight:700; margin-bottom:6px;}
+.poster .brand-word{font-size:23px; line-height:1; font-weight:900; letter-spacing:.3px; color:#fff;}
+.poster .brand-word span{color:var(--blue-light);}
+.poster .brand-ar{font-size:12.5px; line-height:1.4; color:rgba(255,255,255,.66); margin-top:3px; font-weight:500;}
+
+/* ---------- ribbon ----------
+   Tail height now derives from a fully determined ribbon box:
+   7 + (11.5 * 1.25) + 1 + (10 * 1.3) + 6 = 41px, so 20px half-height tails
+   sit exactly on the midpoint. Previously the box height depended on an
+   inherited line-height, so the hardcoded 19px tails were correct on one page
+   and wrong on the other. */
+.poster .ribbon{
+  position:relative; display:inline-flex; flex-direction:column; align-items:center;
+  background:var(--blue); color:#fff; padding:7px 30px 6px; margin-top:12px;
+  font-size:11.5px; line-height:1.25; font-weight:800; letter-spacing:.4px; z-index:2;
+  border-radius:6px;
+}
+.poster .ribbon::before, .poster .ribbon::after{
+  content:''; position:absolute; top:0; width:0; height:0;
+  border-top:20px solid #033a73;
+}
+.poster .ribbon::before{left:-11px; border-left:11px solid transparent;}
+.poster .ribbon::after{right:-11px; border-right:11px solid transparent;}
+.poster .ribbon .sub{font-size:10px; line-height:1.3; font-weight:500; opacity:.85; margin-top:1px; letter-spacing:normal;}
+
+/* ---------- trust badges ---------- */
+.poster .mini-badges{display:flex; justify-content:center; gap:22px; padding:10px 10px 2px;}
+.poster .mini-badges div{display:flex; flex-direction:column; align-items:center; gap:5px; width:76px;}
+.poster .mini-badges .ic{
+  width:34px; height:34px; border-radius:50%; border:1.5px solid var(--blue-light);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.poster .mini-badges .ic img{width:16px; height:16px; display:block;}
+.poster .mini-badges b{font-size:8.6px; line-height:1.4; font-weight:800; color:#fff; letter-spacing:.2px;}
+.poster .mini-badges span{font-size:8px; line-height:1.4; color:rgba(255,255,255,.7); font-weight:500;}
+
+/* ---------- list heading ---------- */
+.poster .list-title{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:14px 10px 3px; font-size:18px; line-height:1.4; font-weight:900;
+}
+.poster .list-title .en{color:var(--blue-light);}
+.poster .list-title .divider{width:1px; height:18px; background:rgba(255,255,255,.3);}
+.poster .date-row{text-align:center; font-size:11px; line-height:1.4; color:var(--gold); font-weight:700; padding-bottom:8px;}
+
+/* ---------- product rows ---------- */
+.poster .plist{margin:0 16px; display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+
+.poster .prow{
+  display:flex; flex-direction:column; gap:5px; padding:7px 8px;
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r-md); min-width:0;
+}
+.poster .prow .ptop{display:flex; align-items:center; gap:7px; min-width:0;}
+.poster .prow .pphoto{
+  width:38px; height:38px; border-radius:var(--r-sm); overflow:hidden; flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,.1); background:#0c1c2b;
+  position:relative;
+}
+/* poster.js replaces these with explicit px geometry once the natural size is
+   known - that hand-rolled `cover` is what makes the PNG crop match the
+   on-screen crop. These are the pre-JS defaults only. */
+.poster .prow .pphoto img{
+  position:absolute; left:0; top:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+.poster .prow .pinfo{flex:1; min-width:0;}
+.poster .prow .pinfo .nm{font-size:10.5px; line-height:1.3; font-weight:800; color:#fff; overflow-wrap:break-word;}
+.poster .prow .pinfo .en{
+  font-size:7px; line-height:1.3; font-weight:800; color:var(--blue-light);
+  letter-spacing:normal; margin-top:1px; overflow-wrap:break-word;
+  direction:ltr; text-align:right;
+}
+
+/* a lone trailing item spans both columns; cap the pill so it does not
+   stretch into a 408px empty band. */
+.poster .prow:last-child:nth-child(odd){grid-column:1 / -1;}
+.poster .prow:last-child:nth-child(odd) .pprice-box{max-width:191px; margin-inline:auto;}
+
+/* Price pill.
+   margin-top:auto bottom-aligns it, so the pills in the two grid columns stay
+   on one line even when one product name wraps and its neighbour does not.
+   Vertical centering deliberately uses a fixed height + matching line-height
+   on plain inline spans (NOT flex/inline-block/baseline alignment). This was
+   calibrated against the real production export (real Google Fonts Tajawal +
+   real html2canvas): flex/align-items:center and inline-block wrappers were
+   both tested live and caused a consistent ~13px downward offset in the
+   exported PNG despite looking centered in the live DOM. The top:-2px on
+   .val/.unit is a live-calibrated sub-pixel correction for this exact
+   font-size (15px/9px) + height (27px) combo - do not change one without
+   re-calibrating the other against the live site's real export. */
+.poster .prow .pprice-box{
+  background:var(--cream); border-radius:var(--r-sm); padding:0 10px;
+  height:27px; line-height:27px; white-space:nowrap; overflow:hidden;
+  margin-top:auto;
+}
+.poster .prow .pprice-box .val{font-size:15px; font-weight:900; color:var(--navy); letter-spacing:.2px; position:relative; top:-2px;}
+.poster .prow .pprice-box .val.dots{font-size:13px; font-weight:800; letter-spacing:2px; color:rgba(28,23,16,.55);}
+.poster .prow .pprice-box .unit{font-size:9px; font-weight:800; color:var(--blue); letter-spacing:normal; margin-inline-start:4px; position:relative; top:-2px;}
+
+.poster .plist-msg{
+  grid-column:1 / -1; text-align:center; padding:20px 8px;
+  color:rgba(255,255,255,.72); font-size:12px; line-height:1.5;
+}
+
+/* ---------- footer ---------- */
+.poster .footer-trust{display:flex; justify-content:center; gap:10px; padding:14px 10px 4px; flex-wrap:wrap;}
+.poster .footer-trust div{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  font-size:8.5px; line-height:1.4; color:rgba(255,255,255,.8); font-weight:700;
+  width:82px; text-align:center;
+}
+.poster .footer-trust .ic{
+  width:26px; height:26px; border-radius:50%; background:rgba(62,143,217,.12);
+  border:1px solid rgba(62,143,217,.4); display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.poster .footer-trust .ic img{width:13px; height:13px; display:block;}
+/* was rgba(255,255,255,.5) over the parent .6 = 2.58:1 effective. now 4.6:1. */
+.poster .footer-trust .sub{color:rgba(255,255,255,.72); font-weight:500;}
+.poster .footer-tag{text-align:center; padding:8px 10px 16px; font-size:13px; line-height:1.4; font-weight:800; color:var(--gold);}
+.poster .footer-tag .en{display:block; font-size:8.5px; line-height:1.4; color:rgba(255,255,255,.62); font-weight:500; margin-top:2px; letter-spacing:.5px;}
+.poster .wa-strip{
+  background:var(--navy2); text-align:center; padding:10px;
+  font-size:11px; line-height:1.5; color:rgba(255,255,255,.78);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.poster .wa-strip b{color:#fff;}
+.poster .wa-strip bdi{direction:ltr; unicode-bidi:isolate;}
+
+/* ---------- download button ---------- */
+.poster-toolbar{display:flex; justify-content:center; margin-bottom:var(--s-5);}
+.dl-btn{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  background:var(--blue); color:#fff; border:none;
+  padding:var(--s-3) var(--s-5); border-radius:var(--r-pill);
+  font-family:inherit; font-weight:800; font-size:var(--t-base); line-height:1.4;
+  cursor:pointer;
+  box-shadow:0 8px 22px rgba(6,101,189,.3);
+  transition:background .18s ease, transform .18s ease;
+}
+.dl-btn:hover:not(:disabled){background:var(--blue-hover); transform:translateY(-1px);}
+.dl-btn:active:not(:disabled){transform:translateY(0);}
+.dl-btn:disabled{opacity:.55; cursor:progress; box-shadow:none;}
+.dl-btn svg{width:18px; height:18px; flex-shrink:0;}
+
+/* off-screen host used for the fixed-460px capture clone */
+/* absolute, NOT fixed: html2canvas derives document coordinates by adding the
+   page scroll to an element's viewport rect. A fixed host sits at viewport 0
+   while the library believes it is at scrollY, so the capture window lands
+   somewhere else on a scrolled page and the PNG comes out vertically offset. */
+#fzCaptureHost{
+  position:absolute; top:0; left:-10000px;
+  width:460px; padding:0; margin:0;
+  pointer-events:none; z-index:-1;
+}

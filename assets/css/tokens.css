@@ -1,0 +1,48 @@
+/* Fresh Zone — design tokens. Single source of truth for every page. */
+:root{
+  /* ---- brand colour ---- */
+  --navy:#030C13;
+  --navy-mid:#0B1A26;
+  --navy-card:#0F2033;
+  --navy2:#081826;
+
+  --blue:#0665BD;
+  --blue-hover:#0A7AE0;
+  /* the brand accent. baked into the poster SVG gradients + border, so it is
+     the canonical value. do not fork it per page again. */
+  --blue-light:#3E8FD9;
+  /* lighter tint, used only for small text on navy where #3E8FD9 would drop
+     below 4.5:1 contrast. never used inside the poster. */
+  --blue-pale:#8CBEEB;
+
+  --cream:#F4EEE2;
+  --cream-card:#FFFDF9;
+  --ink:#1C1710;
+  --ink-soft:#5c5346;
+  --gold:#E6B25A;
+
+  --line-on-navy:rgba(255,255,255,.12);
+  --line-on-cream:rgba(28,23,16,.10);
+
+  /* ---- spacing scale (4pt grid) ---- */
+  --s-1:4px;   --s-2:8px;   --s-3:12px;  --s-4:16px;  --s-5:20px;
+  --s-6:24px;  --s-8:32px;  --s-10:40px; --s-12:48px; --s-16:64px;
+  --s-20:80px; --s-24:96px;
+
+  /* ---- type scale ---- */
+  --t-xs:12px;  --t-sm:13px;  --t-base:14px; --t-md:16px;  --t-lg:18px;
+  --t-xl:20px;  --t-2xl:24px; --t-3xl:30px;  --t-4xl:38px;
+
+  /* ---- radii ---- */
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:24px; --r-pill:999px;
+
+  /* ---- chrome ---- */
+  --header-h:72px;
+}
+
+/* keyboard focus, applied site-wide. there was no :focus rule anywhere before. */
+:focus-visible{
+  outline:3px solid var(--blue-pale);
+  outline-offset:2px;
+  border-radius:4px;
+}
