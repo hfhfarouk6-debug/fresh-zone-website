@@ -347,6 +347,9 @@
             <input type="number" step="0.25" id="marketPrice" placeholder="مثال: 62.5">
             <button class="btn btn-market" id="saveMarketBtn">حفظ سعر اليوم</button>
           </div>
+          <div style="margin-top:10px; font-size:12px; color:#9a9184;">
+            السعر النهائي لكل صنف = (سعر البورصة + 5 جنيه) ثم إضافة النسبة/المبلغ الخاص بالصنف عليها.
+          </div>
         </div>
 
         <div class="toolbar">
@@ -540,10 +543,11 @@
     loadProducts();
   });
 
+  const BASE_PRICE_BUFFER = 5; // جنيه ثابت بيتضاف على سعر البورصة قبل حساب أي نسبة/إضافة لكل الأصناف
   function computeFinalPrice(p){
     if (p.price !== null && p.price !== undefined) return Number(p.price); // manual override wins
     if (currentBasePrice === null || currentBasePrice === undefined) return null;
-    const base = Number(currentBasePrice);
+    const base = Number(currentBasePrice) + BASE_PRICE_BUFFER;
     const mv = Number(p.markup_value || 0);
     return p.markup_type === 'percent' ? base * (1 + mv/100) : base + mv;
   }
