@@ -348,7 +348,7 @@
             <button class="btn btn-market" id="saveMarketBtn">حفظ سعر اليوم</button>
           </div>
           <div style="margin-top:10px; font-size:12px; color:#9a9184;">
-            السعر النهائي لكل صنف = (سعر البورصة + 5 جنيه) ثم إضافة النسبة/المبلغ الخاص بالصنف عليها.
+            السعر النهائي لكل صنف = (سعر البورصة + 5) ثم إضافة النسبة/المبلغ الخاص بالصنف عليها. (الرقم 5 هنا عدد صحيح بيتضاف مباشرة، مش جنيه ومش نسبة).
           </div>
         </div>
 
@@ -404,8 +404,8 @@
         <div class="field">
           <label>نوع الإضافة على البورصة</label>
           <select id="markupType" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(28,23,16,.15); background:var(--cream); color:var(--ink); font-family:inherit; font-size:15px;">
-            <option value="fixed">رقم ثابت (جنيه)</option>
-            <option value="percent">نسبة %</option>
+            <option value="fixed">رقم ثابت (جنيه) — بيتضاف</option>
+            <option value="percent">رقم بيضرب (×)</option>
           </select>
         </div>
         <div class="field">
@@ -413,7 +413,7 @@
           <input type="number" step="0.25" id="markupValue" value="0">
         </div>
       </div>
-      <div class="hint">مثال: لو البورصة 62 جنيه وحطيت رقم ثابت 8، السعر النهائي 70 جنيه. لو حطيت نسبة 10%، يبقى 68.2 جنيه.</div>
+      <div class="hint">مثال: لو البورصة 62 جنيه (يبقى 62+5=67)، وحطيت "رقم ثابت" 8، السعر النهائي 75 جنيه. لو حطيت "رقم بيضرب" 1.1، يبقى 67 × 1.1 = 73.7 جنيه.</div>
       <div class="field">
         <label>سعر يدوي (اختياري — لو عايز تتجاوز الحساب التلقائي)</label>
         <input type="number" step="0.5" id="price" placeholder="سيبه فاضي عشان يتحسب تلقائي من البورصة">
@@ -543,13 +543,13 @@
     loadProducts();
   });
 
-  const BASE_PRICE_BUFFER = 5; // جنيه ثابت بيتضاف على سعر البورصة قبل حساب أي نسبة/إضافة لكل الأصناف
+  const BASE_PRICE_BUFFER = 5; // عدد صحيح ثابت بيتضاف على سعر البورصة مباشرة (مش جنيه ومش نسبة) قبل حساب أي نسبة/إضافة لكل الأصناف
   function computeFinalPrice(p){
     if (p.price !== null && p.price !== undefined) return Number(p.price); // manual override wins
     if (currentBasePrice === null || currentBasePrice === undefined) return null;
     const base = Number(currentBasePrice) + BASE_PRICE_BUFFER;
     const mv = Number(p.markup_value || 0);
-    return p.markup_type === 'percent' ? base * (1 + mv/100) : base + mv;
+    return p.markup_type === 'percent' ? base * mv : base + mv;
   }
 
   // ---------- LOAD PRODUCTS ----------
@@ -594,7 +594,7 @@
   function rowHtml(p){
     const finalPrice = computeFinalPrice(p);
     const priceLabel = finalPrice !== null ? `${finalPrice.toLocaleString('ar-EG', {maximumFractionDigits:2})} ج.م` : '—';
-    const markupLabel = p.markup_type === 'percent' ? `${p.markup_value}%` : `+${p.markup_value} ج.م`;
+    const markupLabel = p.markup_type === 'percent' ? `× ${p.markup_value}` : `+${p.markup_value} ج.م`;
     const overrideNote = (p.price !== null && p.price !== undefined) ? '<br><span style="font-size:11px; color:#E6B25A;">سعر يدوي</span>' : '';
     const img = p.image_url || '';
     const thumbHtml = img

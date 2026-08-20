@@ -239,13 +239,13 @@
   const todayStr = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   document.getElementById('dateRow').textContent = 'أسعار يوم ' + todayStr;
 
-  const BASE_PRICE_BUFFER = 5; // جنيه ثابت بيتضاف على سعر البورصة قبل حساب أي نسبة/إضافة لكل الأصناف
+  const BASE_PRICE_BUFFER = 5; // عدد صحيح ثابت بيتضاف على سعر البورصة مباشرة (مش جنيه ومش نسبة) قبل حساب أي نسبة/إضافة لكل الأصناف
   function computeFinalPrice(p, basePrice){
     if (p.price !== null && p.price !== undefined) return Number(p.price);
     if (basePrice === null || basePrice === undefined) return null;
     const base = Number(basePrice) + BASE_PRICE_BUFFER;
     const mv = Number(p.markup_value || 0);
-    return p.markup_type === 'percent' ? base * (1 + mv/100) : base + mv;
+    return p.markup_type === 'percent' ? base * mv : base + mv;
   }
 
   const ICONS = {
