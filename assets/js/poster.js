@@ -432,6 +432,21 @@ window.FZ = window.FZ || {};
     poster.style.boxShadow = 'none';
   }
 
+  /* Wait for the final layout to be painted, not merely computed.
+     Two animation frames are the accurate signal, but rAF is suspended in a
+     backgrounded tab - and a headless page can be backgrounded, which is
+     exactly where this is used. So a timer runs alongside and settles it
+     regardless; whichever fires first wins. Without the timer the export
+     waits forever on a frame that is never scheduled. */
+  function settleFrames() {
+    return new Promise(function (resolve) {
+      var done = false;
+      function finish() { if (done) return; done = true; resolve(); }
+      requestAnimationFrame(function () { requestAnimationFrame(finish); });
+      setTimeout(finish, 250);
+    });
+  }
+
   /* Asks the server for the PNG. Rejects - rather than hanging - on a cold
      start that overruns, so the caller can fall back while the customer is
      still watching. */
@@ -597,14 +612,10 @@ window.FZ = window.FZ || {};
 
     Promise.all([dataReady, fontsReady(), libReady])
       .then(function () {
-        /* Two frames: the first applies the final layout, the second proves it
-           has been painted. Raising the flag any earlier lets the server
-           screenshot land mid-reflow. */
+        /* Raising the flag any earlier lets the server screenshot land
+           mid-reflow. */
         if (EXPORT_MODE) {
-          requestAnimationFrame(function () {
-            requestAnimationFrame(function () { window[READY_FLAG] = true; });
-          });
-          return;
+          return settleFrames().then(function () { window[READY_FLAG] = true; });
         }
         if (isLocal) { setDead(AR.dlLocal); return; }
         setReady();
