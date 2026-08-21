@@ -69,6 +69,10 @@ module.exports = async (req, res) => {
     const browser = await getBrowser();
     page = await browser.newPage();
     await page.setViewport({ width: WIDTH, height: 1200, deviceScaleFactor: SCALE });
+    /* A backgrounded tab has rAF suspended and paints lazily. The page guards
+       against that too, but a foreground tab is the condition its timings were
+       written for. */
+    await page.bringToFront();
 
     const target = `${originOf(req)}/pricelist.html?fzexport=1`;
 
