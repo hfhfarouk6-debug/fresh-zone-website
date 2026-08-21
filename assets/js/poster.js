@@ -378,11 +378,12 @@ window.FZ = window.FZ || {};
         setTimeout(r, 8000);
       });
     }))
-      .then(function () {
-        return new Promise(function (r) {
-          requestAnimationFrame(function () { requestAnimationFrame(r); });
-        });
-      })
+      /* Was a bare double-rAF. rAF is suspended while a tab is backgrounded,
+         and on a phone that is simply what happens when someone taps the
+         button and switches to WhatsApp - the export would then never finish
+         and the button sat on "preparing" forever. settleFrames keeps the
+         two-frame accuracy but cannot hang. */
+      .then(settleFrames)
       .then(function () {
         /* No width/windowWidth/scrollX/scrollY overrides. The clone is already
            pinned to exactly CAPTURE_WIDTH in an unscaled host, so letting
