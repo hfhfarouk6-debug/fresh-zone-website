@@ -1,0 +1,10 @@
+{
+  "name": "fresh-zone-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fresh Zone - daily price-list site. The site itself is static; the only dependencies here are for the /api/poster function, which renders the price-list PNG in a real headless Chrome.",
+  "dependencies": {
+    "@sparticuz/chromium": "149.0.0",
+    "puppeteer-core": "25.8.0"
+  }
+}
