@@ -43,8 +43,15 @@ section[id]{scroll-margin-top:calc(var(--header-h) + var(--s-4));}
 @media (max-width:600px){ :root{ --section-y:var(--s-12); } }
 
 /* signature diagonal corner motif, reused from the brand social templates.
-   named -start/-end because they are logical, not physical, corners. */
-.corner{position:absolute; width:0; height:0;}
+   named -start/-end because they are logical, not physical, corners.
+
+   The host section MUST be positioned (see .hero / .steps below). Without
+   that these anchor to the page instead of their section, and the bottom
+   wedge drifts down the document until it sits on top of whatever happens to
+   be there - on a phone that was the third order step, with the wedge
+   covering its text. pointer-events:none because it is pure decoration and
+   was swallowing taps on anything it overlapped. */
+.corner{position:absolute; width:0; height:0; z-index:0; pointer-events:none;}
 .corner-top{top:0; inset-inline-end:0; border-style:solid; border-width:0 130px 130px 0; border-color:transparent var(--blue) transparent transparent;}
 .corner-bottom{bottom:0; inset-inline-start:0; border-style:solid; border-width:110px 0 0 110px; border-color:transparent transparent transparent var(--blue);}
 
@@ -85,12 +92,17 @@ nav.wrap{display:flex; align-items:center; justify-content:space-between; height
 
 /* ---------- HERO ---------- */
 .hero{
+  position:relative;
   padding:var(--section-y) 0;
   background:
     radial-gradient(700px 420px at 78% -8%, rgba(6,101,189,.35), transparent 60%),
     var(--navy);
 }
-.hero .wrap{display:grid; grid-template-columns:1.05fr .95fr; gap:var(--s-12); align-items:center;}
+/* above .corner, which is decoration and must never sit over the copy */
+.hero .wrap{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:1.05fr .95fr; gap:var(--s-12); align-items:center;
+}
 .eyebrow{
   display:inline-flex; align-items:center; gap:var(--s-2);
   font-size:var(--t-sm); font-weight:700;
@@ -171,7 +183,8 @@ h1 em{font-style:normal; color:var(--blue-pale);}
 .products-foot h3{font-size:var(--t-md); margin-bottom:var(--s-3); color:var(--ink);}
 
 /* ---------- HOW IT WORKS ---------- */
-.steps{padding:var(--section-y) 0; background:var(--navy);}
+.steps{position:relative; padding:var(--section-y) 0; background:var(--navy);}
+.steps .wrap{position:relative; z-index:1;}
 .steps-list{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-6);}
 .step{background:var(--navy-card); border:1px solid var(--line-on-navy); border-radius:var(--r-lg); padding:var(--s-8) var(--s-6);}
 .step .num{

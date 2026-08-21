@@ -235,6 +235,39 @@
 .dl-btn:disabled{opacity:.55; cursor:progress; box-shadow:none;}
 .dl-btn svg{width:18px; height:18px; flex-shrink:0;}
 
+/* ---------- download progress ----------
+   Building the PNG takes seconds, and a button that only greys out reads as
+   a button that did nothing - people tap it again. So while it works the
+   button becomes its own progress bar and counts the seconds down.
+   The generic :disabled dimming is cancelled here: at 55% opacity the
+   countdown is the one thing you cannot read. */
+.dl-btn.is-working{
+  opacity:1; position:relative; overflow:hidden; cursor:progress;
+  background:var(--blue); box-shadow:none;
+}
+.dl-btn .dl-fill{
+  position:absolute; top:0; bottom:0; inset-inline-start:0; width:0;
+  background:rgba(255,255,255,.24);
+  transition:width .9s linear;
+  pointer-events:none;
+}
+/* Keep the label above the fill and stop the countdown digits from shifting
+   the button's width as they change. */
+.dl-btn .dl-label{position:relative; z-index:1;}
+.dl-btn .dl-count{
+  position:relative; z-index:1;
+  font-variant-numeric:tabular-nums;
+  min-width:2.4em; text-align:center;
+}
+/* Past the estimate there is no honest number left to show, so the bar stops
+   claiming progress and just says it is still working. */
+@keyframes fz-pulse{50%{opacity:.45;}}
+.dl-btn.is-overrun .dl-fill{animation:fz-pulse 1.1s ease-in-out infinite;}
+@media (prefers-reduced-motion: reduce){
+  .dl-btn .dl-fill{transition:none;}
+  .dl-btn.is-overrun .dl-fill{animation:none;}
+}
+
 /* off-screen host used for the fixed-460px capture clone */
 /* absolute, NOT fixed: html2canvas derives document coordinates by adding the
    page scroll to an element's viewport rect. A fixed host sits at viewport 0
