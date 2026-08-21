@@ -145,6 +145,9 @@ window.FZ = window.FZ || {};
     pricesOf: 'أسعار يوم ',
     preparing:'بيتم تجهيز القائمة...',
     building: 'بيتم التجهيز...',
+    buildingN:'بيتم التجهيز… ',
+    almost:   'باقي لحظات…',
+    secs:     ' ث',
     dlOff:    'التحميل غير متاح',
     dlLocal:  'افتح الموقع من سيرفر عشان تنزّل الصورة',
     exportErr:'حصلت مشكلة في تجهيز الصورة، جرب تاني.',
@@ -448,6 +451,61 @@ window.FZ = window.FZ || {};
     });
   }
 
+  /* ---- download progress -------------------------------------------------
+     A disabled, greyed-out button is indistinguishable from a broken one for
+     the several seconds this takes, and people re-tap it. So the button turns
+     into its own progress bar with a live countdown.
+
+     The countdown is an estimate and is treated as one: it counts down to
+     zero and then STOPS pretending, switching to "almost there" rather than
+     sitting on 0 or, worse, counting into negative numbers. Overrunning is
+     normal - a cold server or the browser fallback both take longer. */
+  function startProgress(btn, seconds) {
+    if (!btn) return function () {};
+
+    var fill = document.createElement('span');
+    fill.className = 'dl-fill';
+    var label = document.createElement('span');
+    label.className = 'dl-label';
+    var count = document.createElement('span');
+    count.className = 'dl-count';
+
+    btn.textContent = '';
+    btn.appendChild(fill);
+    btn.appendChild(label);
+    btn.appendChild(count);
+    btn.classList.add('is-working');
+    btn.classList.remove('is-overrun');
+
+    var left = seconds;
+    function paint() {
+      if (left > 0) {
+        label.textContent = AR.buildingN;
+        count.textContent = left + AR.secs;
+        /* Stop short of the end: the bar must not read "finished" while the
+           image is still being made. */
+        fill.style.width = Math.round(((seconds - left) / seconds) * 92) + '%';
+      } else {
+        label.textContent = AR.almost;
+        count.textContent = '';
+        btn.classList.add('is-overrun');
+        fill.style.width = '92%';
+      }
+    }
+    paint();
+
+    var timer = setInterval(function () {
+      left -= 1;
+      paint();
+      if (left <= 0) { clearInterval(timer); timer = null; }
+    }, 1000);
+
+    return function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+      btn.classList.remove('is-working', 'is-overrun');
+    };
+  }
+
   /* Asks the server for the PNG. Rejects - rather than hanging - on a cold
      start that overruns, so the caller can fall back while the customer is
      still watching. */
@@ -637,7 +695,12 @@ window.FZ = window.FZ || {};
     if (btn) {
       btn.addEventListener('click', function () {
         if (btn.disabled) return;
-        setBusy(AR.building);
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+        /* Tuned to the measured server render. A cached poster beats it and
+           the bar simply never gets going; a cold start overruns it and the
+           bar says so. Both are better than a silent grey button. */
+        var stopProgress = startProgress(btn, 12);
 
         /* Server first. Only if it cannot deliver do we fall back to painting
            the poster in the browser, which is the path with the known
@@ -658,7 +721,12 @@ window.FZ = window.FZ || {};
             console.error('Fresh Zone: export failed.', e);
             window.alert(AR.exportErr);
           })
-          .finally(setReady);
+          /* Order matters: stopProgress tears down the bar it built, and
+             setReady then restores the button's original icon and label. */
+          .finally(function () {
+            stopProgress();
+            setReady();
+          });
       });
     }
   };
