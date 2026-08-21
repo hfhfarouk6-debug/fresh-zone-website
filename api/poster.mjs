@@ -25,6 +25,18 @@
 
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
+import { createHash } from 'node:crypto';
+
+/* The poster stamps itself with "today". The page reads the clock of whatever
+   machine renders it, and Vercel runs in UTC - so from 21:00 Cairo onwards an
+   unpinned browser prints YESTERDAY's date on tonight's price list. Pin it. */
+const TIMEZONE = 'Africa/Cairo';
+
+/* Same publishable key the browser already ships in assets/js/config.js - it
+   is public by design and guarded by RLS. Used here only to fingerprint the
+   data, never to write. Keep in sync with that file. */
+const SUPA_URL = 'https://gnlvytjcryizrkckpgtx.supabase.co';
+const SUPA_KEY = 'sb_publishable_6Dgu7fTMdr1mqrUsHiiEQQ_GXZOXi91';
 
 /* Matches CAPTURE_WIDTH / CAPTURE_SCALE in assets/js/poster.js: the poster's
    one true layout width, photographed at 3x -> a 1380px PNG. */
@@ -55,6 +67,59 @@ async function getBrowser() {
   return browserPromise;
 }
 
+/* ---- result cache -------------------------------------------------------
+   Rendering is ~11s because a whole browser has to load the page, the data,
+   twelve product photos and five font weights. But the poster only changes
+   when the prices, the product list or the day changes - and the owner
+   typically downloads it several times in a row while sharing it around.
+
+   So: fingerprint the inputs, and reuse the PNG while that fingerprint holds.
+   Keyed on the data itself rather than on a timer, so a price edited in the
+   dashboard is reflected on the very next download instead of after some
+   arbitrary TTL. Lives in module scope, so it lasts as long as the warm
+   container and costs nothing when cold. */
+let cached = null; /* { key, png } */
+
+function cairoDay() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(new Date());
+}
+
+/* Returns null when it cannot be determined - the caller then just renders,
+   because a missing fingerprint must cost speed, never correctness. */
+async function dataFingerprint() {
+  try {
+    const headers = { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` };
+    const [settings, products] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/market_settings?select=base_price&id=eq.1`, { headers })
+        .then((r) => (r.ok ? r.text() : Promise.reject(new Error(`settings ${r.status}`)))),
+      fetch(
+        `${SUPA_URL}/rest/v1/products?select=id,name_ar,name_en,image_url,price,markup_type,markup_value,sort_order&is_available=eq.true&order=sort_order.asc`,
+        { headers }
+      ).then((r) => (r.ok ? r.text() : Promise.reject(new Error(`products ${r.status}`))))
+    ]);
+    return createHash('sha1').update(`${cairoDay()}|${settings}|${products}`).digest('hex');
+  } catch (e) {
+    console.warn('poster fingerprint unavailable, rendering fresh:', e.message);
+    return null;
+  }
+}
+
+function sendPng(res, png, hit) {
+  res.setHeader('Content-Type', 'image/png');
+  res.setHeader(
+    'Content-Disposition',
+    `inline; filename="fresh-zone-price-list-${cairoDay()}.png"`
+  );
+  /* Prices change during the day and the poster carries today's date, so the
+     browser must never hold on to it; the server-side cache above is the one
+     doing the reuse, and it knows when the data moved. */
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
+  res.setHeader('X-Poster-Cache', hit ? 'hit' : 'miss');
+  return res.status(200).send(png);
+}
+
 function originOf(req) {
   /* Works unchanged on production, preview URLs and custom domains - never
      hardcode the host, or previews silently photograph production. */
@@ -71,8 +136,16 @@ export default async function handler(req, res) {
   const logs = [];
   const failed = [];
   try {
+    /* Ask before building: on a warm container an unchanged poster comes back
+       in a few hundred milliseconds instead of eleven seconds. */
+    const key = await dataFingerprint();
+    if (!debug && key && cached && cached.key === key) {
+      return sendPng(res, cached.png, true);
+    }
+
     const browser = await getBrowser();
     page = await browser.newPage();
+    await page.emulateTimezone(TIMEZONE);
 
     if (debug) {
       page.on('console', (m) => logs.push(`${m.type()}: ${m.text()}`.slice(0, 300)));
@@ -169,15 +242,8 @@ export default async function handler(req, res) {
 
     const png = await el.screenshot({ type: 'png' });
 
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="fresh-zone-price-list-${new Date().toISOString().slice(0, 10)}.png"`
-    );
-    /* Prices change during the day and the poster is stamped with today's
-       date, so this must never be served stale. */
-    res.setHeader('Cache-Control', 'no-store, max-age=0');
-    return res.status(200).send(png);
+    if (key) cached = { key, png };
+    return sendPng(res, png, false);
   } catch (err) {
     console.error('poster export failed:', err);
     /* Plain text, and never image/png: the client checks the MIME type and
