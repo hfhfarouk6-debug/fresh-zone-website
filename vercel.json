@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/poster.mjs": {
+      "memory": 2048,
+      "maxDuration": 60
+    }
+  }
+}
