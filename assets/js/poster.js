@@ -38,6 +38,29 @@ window.FZ = window.FZ || {};
 
   var HTML2CANVAS_SRC = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
 
+  /* ---- server-side export ------------------------------------------------
+     /api/poster screenshots this very page in a real headless Chrome, so the
+     PNG is produced by the same engine that painted the screen instead of by
+     html2canvas re-implementing it. That removes the whole class of
+     "looks right live, wrong in the file" bugs (text baselines under a
+     custom Arabic font, object-fit, box-shadow, gradients) rather than
+     working around them one at a time.
+
+     html2canvas stays loaded as a fallback: if the function cold-starts too
+     slowly, errors, or the deployment has no /api at all, the button still
+     produces an image. Server first, canvas second, never nothing. */
+  var API_ENDPOINT = '/api/poster';
+  var API_TIMEOUT = 45000;
+
+  /* The flag the server-side browser waits on. Set once data, product images
+     and every font weight have settled - i.e. exactly when the on-screen
+     poster stops changing. Screenshotting before this captures a half-built
+     grid. */
+  var READY_FLAG = '__fzPosterReady';
+
+  /* Rendering this page for the camera, not for a person. */
+  var EXPORT_MODE = /[?&]fzexport=1(?:&|$)/.test(window.location.search);
+
   /* Local, same-origin, ~250 bytes. Replaces the old fallback, which was the
      107KB landscape hero photo decoded into a 38px square. */
   var PLACEHOLDER =
@@ -379,6 +402,79 @@ window.FZ = window.FZ || {};
       });
   }
 
+  /* ---- export mode -------------------------------------------------------
+     Reduce the document to the poster alone, unscaled, on the same cream the
+     rounded corners composite against. Done by moving the node rather than by
+     hiding page furniture with CSS, so it behaves identically on both host
+     pages and cannot be broken later by a new wrapper element.
+
+     No zoom here on purpose: the poster's one true layout is 460px, and the
+     server browser is given a 460px viewport, so what the camera sees is the
+     canonical layout at 1:1. */
+  function stripToPoster(poster) {
+    if (poster.parentNode) poster.parentNode.removeChild(poster);
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(poster);
+
+    document.documentElement.style.background = CAPTURE_BG;
+    var b = document.body.style;
+    b.background = CAPTURE_BG;
+    b.margin = '0';
+    b.padding = '0';
+    b.width = CAPTURE_WIDTH + 'px';
+    b.overflow = 'hidden';
+
+    poster.style.width = CAPTURE_WIDTH + 'px';
+    poster.style.maxWidth = CAPTURE_WIDTH + 'px';
+    poster.style.margin = '0';
+    /* falls outside the element box; the server crops to the element, so it
+       would only bleed a grey halo into the top edge of the PNG. */
+    poster.style.boxShadow = 'none';
+  }
+
+  /* Wait for the final layout to be painted, not merely computed.
+     Two animation frames are the accurate signal, but rAF is suspended in a
+     backgrounded tab - and a headless page can be backgrounded, which is
+     exactly where this is used. So a timer runs alongside and settles it
+     regardless; whichever fires first wins. Without the timer the export
+     waits forever on a frame that is never scheduled. */
+  function settleFrames() {
+    return new Promise(function (resolve) {
+      var done = false;
+      function finish() { if (done) return; done = true; resolve(); }
+      requestAnimationFrame(function () { requestAnimationFrame(finish); });
+      setTimeout(finish, 250);
+    });
+  }
+
+  /* Asks the server for the PNG. Rejects - rather than hanging - on a cold
+     start that overruns, so the caller can fall back while the customer is
+     still watching. */
+  function fetchServerPng() {
+    if (!window.fetch) return Promise.reject(new Error('no fetch'));
+
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, API_TIMEOUT);
+
+    return fetch(API_ENDPOINT + '?t=' + Date.now(), {
+      signal: ctrl ? ctrl.signal : undefined,
+      cache: 'no-store'
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('api ' + res.status);
+        return res.blob();
+      })
+      .then(function (blob) {
+        /* An error page served with a 200 would otherwise be "downloaded" as
+           a broken .png. */
+        if (!blob || blob.type.indexOf('image/png') !== 0 || blob.size < 1024) {
+          throw new Error('api returned non-image');
+        }
+        return blob;
+      })
+      .finally(function () { clearTimeout(timer); });
+  }
+
   /* toDataURL on a 1380 x ~2100 canvas produces a multi-megabyte base64
      string, and assigning that to an anchor href fails silently on iOS
      Safari - the platform the owner's staff actually share from. A Blob URL
@@ -426,12 +522,16 @@ window.FZ = window.FZ || {};
     var dateEl = poster.querySelector('#fzDateRow');
     if (dateEl) dateEl.textContent = AR.pricesOf + FZ.formatDate();
 
-    fitStage(stage);
-    var rt;
-    window.addEventListener('resize', function () {
-      clearTimeout(rt);
-      rt = setTimeout(function () { fitStage(stage); }, 120);
-    });
+    if (EXPORT_MODE) {
+      stripToPoster(poster);
+    } else {
+      fitStage(stage);
+      var rt;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () { fitStage(stage); }, 120);
+      });
+    }
 
     var btnLabel = btn ? btn.innerHTML : '';
     function setBusy(text) {
@@ -470,11 +570,14 @@ window.FZ = window.FZ || {};
        downloaded a poster whose grid read "loading...". */
     setBusy(AR.preparing);
 
-    var libReady = isLocal
+    /* In export mode the server is the renderer, so html2canvas is dead weight
+       - and a CDN it cannot reach would stall the screenshot behind a network
+       timeout. On the live page it is still loaded, but no longer fatal: it is
+       only the fallback now, so a CDN outage must not disable the button. */
+    var libReady = (isLocal || EXPORT_MODE)
       ? Promise.resolve()
       : loadScript(HTML2CANVAS_SRC).catch(function (e) {
-          console.warn('Fresh Zone: html2canvas failed to load.', e);
-          throw e;
+          console.warn('Fresh Zone: html2canvas failed to load; server export only.', e);
         });
 
     var sb = FZ.client();
@@ -509,6 +612,11 @@ window.FZ = window.FZ || {};
 
     Promise.all([dataReady, fontsReady(), libReady])
       .then(function () {
+        /* Raising the flag any earlier lets the server screenshot land
+           mid-reflow. */
+        if (EXPORT_MODE) {
+          return settleFrames().then(function () { window[READY_FLAG] = true; });
+        }
         if (isLocal) { setDead(AR.dlLocal); return; }
         setReady();
       })
@@ -517,17 +625,30 @@ window.FZ = window.FZ || {};
           console.warn('Fresh Zone: price list unavailable.', e);
           if (listEl && !listEl.querySelector('.plist-msg')) msg(AR.failed);
         }
+        /* Tell the server why, so it fails fast with a real reason instead of
+           timing out on a flag that will never be set. */
+        if (EXPORT_MODE) { window.__fzPosterError = String((e && e.message) || e); return; }
         setDead(AR.dlOff);
       });
+
+    if (EXPORT_MODE) return;
 
     if (btn) {
       btn.addEventListener('click', function () {
         if (btn.disabled) return;
         setBusy(AR.building);
-        rasterise(poster)
-          .then(function (out) {
-            if (out.degraded) warn(AR.imgWarnA + out.degraded + AR.imgWarnB);
-            return canvasToBlob(out.canvas);
+
+        /* Server first. Only if it cannot deliver do we fall back to painting
+           the poster in the browser, which is the path with the known
+           fidelity limits. */
+        fetchServerPng()
+          .catch(function (e) {
+            console.warn('Fresh Zone: server export unavailable, using browser fallback.', e);
+            if (!window.html2canvas) throw e;
+            return rasterise(poster).then(function (out) {
+              if (out.degraded) warn(AR.imgWarnA + out.degraded + AR.imgWarnB);
+              return canvasToBlob(out.canvas);
+            });
           })
           .then(function (blob) {
             return deliver(blob, 'fresh-zone-price-list-' + FZ.dateSlug() + '.png');
