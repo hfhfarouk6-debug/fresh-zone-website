@@ -175,23 +175,19 @@
 /* Price pill.
    margin-top:auto bottom-aligns it, so the pills in the two grid columns stay
    on one line even when one product name wraps and its neighbour does not.
-   Vertical centering deliberately uses a fixed height + matching line-height
-   on plain inline spans (NOT flex/inline-block/baseline alignment). This was
-   calibrated against the real production export (real Google Fonts Tajawal +
-   real html2canvas): flex/align-items:center and inline-block wrappers were
-   both tested live and caused a consistent ~13px downward offset in the
-   exported PNG despite looking centered in the live DOM. The top:-2px on
-   .val/.unit is a live-calibrated sub-pixel correction for this exact
-   font-size (15px/9px) + height (27px) combo - do not change one without
-   re-calibrating the other against the live site's real export. */
+   The inline-block wrapper baseline-aligns the number against the unit while
+   the flex parent centres the whole line - replacing the old
+   line-height:27px + top:-2px + overflow:hidden trio, which left 0.6px of
+   headroom and clipped digit tops under html2canvas baseline drift. */
 .poster .prow .pprice-box{
   background:var(--cream); border-radius:var(--r-sm); padding:0 10px;
-  height:27px; line-height:27px; white-space:nowrap; overflow:hidden;
-  margin-top:auto;
+  min-height:28px; display:flex; align-items:center; justify-content:center;
+  white-space:nowrap; margin-top:auto;
 }
-.poster .prow .pprice-box .val{font-size:15px; font-weight:900; color:var(--navy); letter-spacing:.2px; position:relative; top:-2px;}
+.poster .prow .pprice-inner{display:inline-block; font-size:15px; line-height:1;}
+.poster .prow .pprice-box .val{font-size:15px; line-height:1; font-weight:900; color:var(--navy); letter-spacing:.2px;}
 .poster .prow .pprice-box .val.dots{font-size:13px; font-weight:800; letter-spacing:2px; color:rgba(28,23,16,.55);}
-.poster .prow .pprice-box .unit{font-size:9px; font-weight:800; color:var(--blue); letter-spacing:normal; margin-inline-start:4px; position:relative; top:-2px;}
+.poster .prow .pprice-box .unit{font-size:9px; line-height:1; font-weight:800; color:var(--blue); letter-spacing:normal; margin-inline-start:4px;}
 
 .poster .plist-msg{
   grid-column:1 / -1; text-align:center; padding:20px 8px;
