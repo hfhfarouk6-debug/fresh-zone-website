@@ -193,7 +193,7 @@ window.FZ = window.FZ || {};
           (nameEn ? '<div class="en" lang="en">' + nameEn + '</div>' : '') +
         '</div>' +
       '</div>' +
-      '<div class="pprice-box">' + priceHtml + '</div>' +
+      '<div class="pprice-box"><span class="pprice-inner">' + priceHtml + '</span></div>' +
     '</div>';
   }
 
