@@ -65,9 +65,21 @@ function originOf(req) {
 
 export default async function handler(req, res) {
   let page;
+  /* ?debug=1 reports what the page was doing instead of photographing it.
+     A screenshot cannot tell you which promise never settled. */
+  const debug = /[?&]debug=1(?:&|$)/.test(req.url || '');
+  const logs = [];
+  const failed = [];
   try {
     const browser = await getBrowser();
     page = await browser.newPage();
+
+    if (debug) {
+      page.on('console', (m) => logs.push(`${m.type()}: ${m.text()}`.slice(0, 300)));
+      page.on('pageerror', (e) => logs.push(`pageerror: ${e.message}`.slice(0, 300)));
+      page.on('requestfailed', (r) =>
+        failed.push(`${r.failure()?.errorText} ${r.url()}`.slice(0, 200)));
+    }
     await page.setViewport({ width: WIDTH, height: 1200, deviceScaleFactor: SCALE });
     /* A backgrounded tab has rAF suspended and paints lazily. The page guards
        against that too, but a foreground tab is the condition its timings were
@@ -82,10 +94,38 @@ export default async function handler(req, res) {
        irrelevant. */
     await page.goto(target, { waitUntil: 'domcontentloaded', timeout: READY_TIMEOUT });
 
-    await page.waitForFunction(
-      'window.__fzPosterReady === true || typeof window.__fzPosterError === "string"',
-      { timeout: READY_TIMEOUT, polling: 100 }
-    );
+    try {
+      await page.waitForFunction(
+        'window.__fzPosterReady === true || typeof window.__fzPosterError === "string"',
+        { timeout: READY_TIMEOUT, polling: 100 }
+      );
+    } catch (waitErr) {
+      if (!debug) throw waitErr;
+      /* Report where it stalled rather than just that it did. */
+      const state = await page.evaluate(() => {
+        const imgs = Array.from(document.querySelectorAll('.pphoto img'));
+        return {
+          ready: window.__fzPosterReady === true,
+          pageError: window.__fzPosterError || null,
+          hasFZ: !!window.FZ,
+          hasSupabaseLib: !!window.supabase,
+          hasClient: window.FZ && window.FZ.client ? !!window.FZ.client() : null,
+          rows: document.querySelectorAll('.prow').length,
+          imgTotal: imgs.length,
+          imgLoaded: imgs.filter((i) => i.complete && i.naturalWidth).length,
+          fontsStatus: document.fonts ? document.fonts.status : 'n/a',
+          visibility: document.visibilityState,
+          listMsg: (document.querySelector('.plist-msg') || {}).textContent || null
+        };
+      }).catch((e) => ({ evaluateFailed: String(e) }));
+
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store, max-age=0');
+      return res.status(200).send(JSON.stringify(
+        { stalled: true, state, logs: logs.slice(-40), failedRequests: failed.slice(-30) },
+        null, 2
+      ));
+    }
 
     /* The page reports its own failures, so a broken price list becomes a
        clear 502 instead of a photograph of an error message. */
