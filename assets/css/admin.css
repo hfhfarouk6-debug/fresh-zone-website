@@ -205,6 +205,21 @@ td.thumb .no-img svg{width:18px; height:18px;}
 .icon-btn:hover{background:var(--cream); border-color:rgba(28,23,16,.2);}
 .icon-btn.danger{color:#b3364a; border-color:rgba(214,69,90,.25);}
 .icon-btn.danger:hover{background:rgba(214,69,90,.06);}
+
+/* Reorder controls. The arrows sit either side of the position number so the
+   row reads as "you are 3rd; move up or down" rather than as two loose icons. */
+.sort-cell{display:flex; align-items:center; gap:var(--s-2);}
+.sort-cell .sort-num{
+  min-width:1.4em; text-align:center; font-weight:800;
+  font-size:var(--t-xs); color:var(--ink-soft);
+}
+.icon-btn.move{
+  padding:var(--s-2); line-height:0; display:inline-flex;
+  align-items:center; justify-content:center;
+}
+.icon-btn.move svg{width:15px; height:15px; display:block;}
+.icon-btn.move:disabled{opacity:.28; cursor:default; background:transparent;}
+.icon-btn.move:disabled:hover{background:transparent; border-color:var(--line-on-cream);}
 .empty-state{padding:var(--s-16) var(--s-5); text-align:center; color:var(--ink-soft);}
 .empty-state svg{width:40px; height:40px; margin:0 auto var(--s-3); opacity:.4;}
 
