@@ -447,7 +447,14 @@
 
     q.then(function (res) {
       saveBtn.disabled = false; saveBtn.textContent = 'حفظ';
-      if (res.error) { reportError(res.error, 'حصل خطأ، جرب تاني'); return; }
+      /* A generic toast hid a real NOT NULL violation for weeks: the operator
+         saw "حصل خطأ" with no way to tell what the database objected to.
+         Surface the actual reason next to the form. */
+      if (res.error) {
+        errEl.textContent = res.error.message || 'حصل خطأ، جرب تاني';
+        reportError(res.error, 'حصل خطأ، جرب تاني');
+        return;
+      }
       closeModal();
       toast('اتحفظ بنجاح');
       loadProducts();
