@@ -179,25 +179,38 @@
         return;
       }
       empty.style.display = 'none';
-      body.innerHTML = products.map(rowHtml).join('');
+      renderRows();
+    });
+  }
 
-      /* Rows carry only the row id. The previous build serialised the whole
-         record into a single-quoted data-edit attribute and escaped only the
-         apostrophe - but the HTML parser decodes character references inside
-         attribute values, so a product name containing the literal text
-         "&#39;" closed the attribute and turned the rest into live handlers.
-         Looking the record up by id removes the escaping question entirely. */
-      Array.prototype.forEach.call(body.querySelectorAll('[data-edit]'), function (b) {
-        b.addEventListener('click', function () {
-          openModal(products.filter(function (p) { return String(p.id) === b.dataset.edit; })[0]);
-        });
+  /* Split out of loadProducts so a reorder can repaint the table from the
+     in-memory list without a round trip to the database. */
+  function renderRows() {
+    var body = document.getElementById('productsBody');
+    body.innerHTML = products.map(rowHtml).join('');
+
+    /* Rows carry only the row id. The previous build serialised the whole
+       record into a single-quoted data-edit attribute and escaped only the
+       apostrophe - but the HTML parser decodes character references inside
+       attribute values, so a product name containing the literal text
+       "&#39;" closed the attribute and turned the rest into live handlers.
+       Looking the record up by id removes the escaping question entirely. */
+    Array.prototype.forEach.call(body.querySelectorAll('[data-edit]'), function (b) {
+      b.addEventListener('click', function () {
+        openModal(products.filter(function (p) { return String(p.id) === b.dataset.edit; })[0]);
       });
-      Array.prototype.forEach.call(body.querySelectorAll('[data-del]'), function (b) {
-        b.addEventListener('click', function () {
-          var p = products.filter(function (x) { return String(x.id) === b.dataset.del; })[0];
-          if (p) askDelete(p);
-        });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-del]'), function (b) {
+      b.addEventListener('click', function () {
+        var p = products.filter(function (x) { return String(x.id) === b.dataset.del; })[0];
+        if (p) askDelete(p);
       });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-move-up]'), function (b) {
+      b.addEventListener('click', function () { moveProduct(b.dataset.moveUp, -1); });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-move-down]'), function (b) {
+      b.addEventListener('click', function () { moveProduct(b.dataset.moveDown, 1); });
     });
   }
 
@@ -207,7 +220,52 @@
       : '+' + (p.markup_value == null ? 0 : p.markup_value) + ' ج.م';
   }
 
-  function rowHtml(p) {
+  var ARROW_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>';
+  var ARROW_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+  /* Reordering by typing sort_order numbers meant the operator had to hold the
+     whole list in their head and renumber by hand. Moving one row swaps it with
+     its neighbour and renumbers the list 1..N, so gaps and duplicate
+     sort_orders left over from manual editing heal themselves on first use. */
+  var reordering = false;
+  function moveProduct(id, dir) {
+    if (reordering) return;
+    var i = -1;
+    products.forEach(function (p, idx) { if (String(p.id) === String(id)) i = idx; });
+    var j = i + dir;
+    if (i < 0 || j < 0 || j >= products.length) return;
+
+    reordering = true;
+    var reordered = products.slice();
+    var tmp = reordered[i]; reordered[i] = reordered[j]; reordered[j] = tmp;
+
+    var writes = [];
+    reordered.forEach(function (p, idx) {
+      var want = idx + 1;
+      if (p.sort_order !== want) {
+        p.sort_order = want;
+        writes.push(sb.from('products').update({ sort_order: want }).eq('id', p.id));
+      }
+    });
+
+    /* Repaint first: the operator sees the row move immediately instead of
+       waiting on the round trip. A failed write reloads the true order back. */
+    products = reordered;
+    renderRows();
+
+    Promise.all(writes).then(function (results) {
+      reordering = false;
+      var failed = results.filter(function (r) { return r && r.error; })[0];
+      if (failed) { reportError(failed.error, 'تعذّر حفظ الترتيب'); loadProducts(); return; }
+      toast('الترتيب اتحفظ');
+    }).catch(function (err) {
+      reordering = false;
+      reportError(err, 'تعذّر حفظ الترتيب');
+      loadProducts();
+    });
+  }
+
+  function rowHtml(p, i, arr) {
     var priceStr = FZ.formatPrice(FZ.computeFinalPrice(p, currentBasePrice));
     var priceLabel = priceStr === null ? '—' : priceStr + ' ج.م';
     var override = (p.price !== null && p.price !== undefined)
@@ -224,7 +282,13 @@
       '<td><b>' + priceLabel + '</b></td>' +
       '<td><span class="badge ' + (p.is_available ? 'on' : 'off') + '">' +
         (p.is_available ? 'متاح' : 'مخفي') + '</span></td>' +
-      '<td>' + (p.sort_order == null ? '' : p.sort_order) + '</td>' +
+      '<td><div class="sort-cell">' +
+        '<button class="icon-btn move" type="button" data-move-up="' + FZ.escapeHtml(p.id) + '"' +
+          (i === 0 ? ' disabled' : '') + ' aria-label="حرّك لفوق" title="حرّك لفوق">' + ARROW_UP + '</button>' +
+        '<span class="sort-num">' + (i + 1) + '</span>' +
+        '<button class="icon-btn move" type="button" data-move-down="' + FZ.escapeHtml(p.id) + '"' +
+          (i === arr.length - 1 ? ' disabled' : '') + ' aria-label="حرّك لتحت" title="حرّك لتحت">' + ARROW_DOWN + '</button>' +
+      '</div></td>' +
       '<td><div class="row-actions">' +
         '<button class="icon-btn" type="button" data-edit="' + FZ.escapeHtml(p.id) + '">تعديل</button>' +
         '<button class="icon-btn danger" type="button" data-del="' + FZ.escapeHtml(p.id) + '">حذف</button>' +
