@@ -115,7 +115,7 @@
             </div>
           </div>
           <div class="market-input-row">
-            <input type="number" step="0.25" min="0" id="marketPrice" placeholder="مثال: 62.5">
+            <input type="number" step="0.01" min="0" id="marketPrice" placeholder="مثال: 62.5">
             <button class="btn btn-market" type="button" id="saveMarketBtn">حفظ سعر اليوم</button>
           </div>
           <p class="market-note">
@@ -185,13 +185,13 @@
         </div>
         <div class="field">
           <label for="markupValue">قيمة الإضافة</label>
-          <input type="number" step="0.25" id="markupValue" value="0">
+          <input type="number" step="0.01" id="markupValue" value="0">
         </div>
       </div>
       <div class="hint" id="markupHint"></div>
       <div class="field">
         <label for="price">سعر يدوي (اختياري — بيتجاهل الحساب التلقائي)</label>
-        <input type="number" step="0.5" min="0" id="price" placeholder="سيبه فاضي عشان يتحسب من البورصة">
+        <input type="number" step="0.01" min="0" id="price" placeholder="سيبه فاضي عشان يتحسب من البورصة">
       </div>
 
       <!-- the number the customer will actually see, recomputed live. worth
