@@ -220,6 +220,21 @@ td.thumb .no-img svg{width:18px; height:18px;}
 .icon-btn.move svg{width:15px; height:15px; display:block;}
 .icon-btn.move:disabled{opacity:.28; cursor:default; background:transparent;}
 .icon-btn.move:disabled:hover{background:transparent; border-color:var(--line-on-cream);}
+
+/* Drag to reorder */
+.sort-cell .grip{
+  display:inline-flex; align-items:center; color:var(--ink-soft);
+  opacity:.35; cursor:grab; transition:opacity .15s ease;
+}
+.sort-cell .grip svg{width:16px; height:16px; display:block;}
+tbody tr:hover .sort-cell .grip{opacity:.75;}
+tbody tr[draggable="true"]{cursor:grab;}
+tbody tr.dragging{opacity:.4; cursor:grabbing; background:var(--cream);}
+tbody tr.dragging .sort-cell .grip{cursor:grabbing;}
+/* A shadow, not a border: a real border on a td changes the row height and
+   makes the whole table jump while the pointer moves between rows. */
+tbody tr.drop-before td{box-shadow:inset 0 2px 0 0 var(--blue, #0665BD);}
+tbody tr.drop-after td{box-shadow:inset 0 -2px 0 0 var(--blue, #0665BD);}
 .empty-state{padding:var(--s-16) var(--s-5); text-align:center; color:var(--ink-soft);}
 .empty-state svg{width:40px; height:40px; margin:0 auto var(--s-3); opacity:.4;}
 
