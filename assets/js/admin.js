@@ -212,6 +212,7 @@
     Array.prototype.forEach.call(body.querySelectorAll('[data-move-down]'), function (b) {
       b.addEventListener('click', function () { moveProduct(b.dataset.moveDown, 1); });
     });
+    bindDrag(body);
   }
 
   function markupLabel(p) {
@@ -222,22 +223,23 @@
 
   var ARROW_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>';
   var ARROW_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  var GRIP = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
 
   /* Reordering by typing sort_order numbers meant the operator had to hold the
      whole list in their head and renumber by hand. Moving one row swaps it with
      its neighbour and renumbers the list 1..N, so gaps and duplicate
      sort_orders left over from manual editing heal themselves on first use. */
   var reordering = false;
-  function moveProduct(id, dir) {
-    if (reordering) return;
+
+  function indexOfId(id) {
     var i = -1;
     products.forEach(function (p, idx) { if (String(p.id) === String(id)) i = idx; });
-    var j = i + dir;
-    if (i < 0 || j < 0 || j >= products.length) return;
+    return i;
+  }
 
+  function persistOrder(reordered) {
+    if (reordering) return;
     reordering = true;
-    var reordered = products.slice();
-    var tmp = reordered[i]; reordered[i] = reordered[j]; reordered[j] = tmp;
 
     var writes = [];
     reordered.forEach(function (p, idx) {
@@ -253,6 +255,8 @@
     products = reordered;
     renderRows();
 
+    if (!writes.length) { reordering = false; return; }
+
     Promise.all(writes).then(function (results) {
       reordering = false;
       var failed = results.filter(function (r) { return r && r.error; })[0];
@@ -265,6 +269,81 @@
     });
   }
 
+  function moveProduct(id, dir) {
+    var i = indexOfId(id);
+    var j = i + dir;
+    if (i < 0 || j < 0 || j >= products.length) return;
+    var reordered = products.slice();
+    var tmp = reordered[i]; reordered[i] = reordered[j]; reordered[j] = tmp;
+    persistOrder(reordered);
+  }
+
+  /* Drag to reorder. The arrow buttons stay: HTML5 drag-and-drop does not fire
+     on touch screens, and this panel gets used from a phone. */
+  var dragId = null;
+
+  function clearDropMarks(body) {
+    Array.prototype.forEach.call(body.querySelectorAll('.drop-before, .drop-after'), function (el) {
+      el.classList.remove('drop-before', 'drop-after');
+    });
+  }
+
+  function bindDrag(body) {
+    Array.prototype.forEach.call(body.querySelectorAll('tr[data-id]'), function (tr) {
+      tr.addEventListener('dragstart', function (e) {
+        if (reordering) { e.preventDefault(); return; }
+        dragId = tr.dataset.id;
+        tr.classList.add('dragging');
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+          /* Firefox refuses to start a drag unless some payload is set. */
+          try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
+        }
+      });
+
+      tr.addEventListener('dragend', function () {
+        tr.classList.remove('dragging');
+        clearDropMarks(body);
+        dragId = null;
+      });
+
+      tr.addEventListener('dragover', function (e) {
+        if (dragId === null || tr.dataset.id === dragId) return;
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+        var rect = tr.getBoundingClientRect();
+        var after = (e.clientY - rect.top) > rect.height / 2;
+        clearDropMarks(body);
+        tr.classList.add(after ? 'drop-after' : 'drop-before');
+      });
+
+      tr.addEventListener('dragleave', function () {
+        tr.classList.remove('drop-before', 'drop-after');
+      });
+
+      tr.addEventListener('drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (dragId === null || tr.dataset.id === dragId) return;
+
+        var after = tr.classList.contains('drop-after');
+        var from = indexOfId(dragId);
+        var targetRow = products[indexOfId(tr.dataset.id)];
+        clearDropMarks(body);
+        dragId = null;
+        if (from < 0 || !targetRow) return;
+
+        var arr = products.slice();
+        var moved = arr.splice(from, 1)[0];
+        /* Look the target up again AFTER the removal - its index shifts by one
+           whenever the dragged row sat above it. */
+        var at = arr.indexOf(targetRow) + (after ? 1 : 0);
+        arr.splice(at, 0, moved);
+        persistOrder(arr);
+      });
+    });
+  }
+
   function rowHtml(p, i, arr) {
     var priceStr = FZ.formatPrice(FZ.computeFinalPrice(p, currentBasePrice));
     var priceLabel = priceStr === null ? '—' : priceStr + ' ج.م';
@@ -274,7 +353,7 @@
       ? '<img src="' + FZ.escapeHtml(p.image_url) + '" alt="">'
       : '<div class="no-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m21 15-5-5L5 21"/></svg></div>';
 
-    return '<tr>' +
+    return '<tr draggable="true" data-id="' + FZ.escapeHtml(p.id) + '">' +
       '<td class="thumb">' + thumb + '</td>' +
       '<td><b>' + FZ.escapeHtml(p.name_ar) + '</b>' +
         '<span class="name-en" dir="ltr">' + FZ.escapeHtml(p.name_en || '') + '</span></td>' +
@@ -283,6 +362,7 @@
       '<td><span class="badge ' + (p.is_available ? 'on' : 'off') + '">' +
         (p.is_available ? 'متاح' : 'مخفي') + '</span></td>' +
       '<td><div class="sort-cell">' +
+        '<span class="grip" aria-hidden="true" title="اسحب لتغيير الترتيب">' + GRIP + '</span>' +
         '<button class="icon-btn move" type="button" data-move-up="' + FZ.escapeHtml(p.id) + '"' +
           (i === 0 ? ' disabled' : '') + ' aria-label="حرّك لفوق" title="حرّك لفوق">' + ARROW_UP + '</button>' +
         '<span class="sort-num">' + (i + 1) + '</span>' +
