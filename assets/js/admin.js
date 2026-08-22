@@ -255,6 +255,11 @@
      it meant 10% (which multiplies the base by ten). */
   function validateDraft(d) {
     if (d.price !== null && (!isFinite(d.price) || d.price < 0)) return 'السعر اليدوي لازم يكون رقم موجب.';
+    /* A manual price bypasses the formula entirely, so the markup fields are
+       dead weight at that point. Validating them anyway blocked operators from
+       adding a fixed-price product whenever the (ignored) multiplier happened
+       to sit outside 1-3. */
+    if (d.price !== null) return null;
     if (d.markup_type === 'percent') {
       if (!(d.markup_value >= 1 && d.markup_value <= 3)) {
         return 'معامل الضرب لازم يكون بين 1 و 3 (يعني 1.15 = زيادة 15%). لو عايز تضيف مبلغ ثابت، غيّر النوع.';
@@ -271,9 +276,21 @@
     var out = $('pricePreviewVal');
     var hint = $('markupHint');
 
-    hint.textContent = d.markup_type === 'percent'
-      ? 'مثال: البورصة 62 → 62+5 = 67، والمعامل 1.1 → 67 × 1.1 = 74 ج.م.'
-      : 'مثال: البورصة 62 → 62+5 = 67، والمبلغ 8 → 67 + 8 = 75 ج.م.';
+    /* Make the bypass visible instead of leaving two live-looking fields that
+       no longer affect anything. */
+    var manual = d.price !== null;
+    $('markupType').disabled = manual;
+    $('markupValue').disabled = manual;
+    ['markupType', 'markupValue'].forEach(function (id) {
+      var wrap = $(id).closest ? $(id).closest('.field') : null;
+      if (wrap) wrap.style.opacity = manual ? '0.45' : '';
+    });
+
+    hint.textContent = manual
+      ? 'الصنف ده على سعر يدوي — البورصة والمعامل مش بيأثروا عليه. فضّي خانة السعر اليدوي عشان يرجع للحسبة.'
+      : (d.markup_type === 'percent'
+        ? 'مثال: البورصة 62 → 62+5 = 67، والمعامل 1.1 → 67 × 1.1 = 74 ج.م.'
+        : 'مثال: البورصة 62 → 62+5 = 67، والمبلغ 8 → 67 + 8 = 75 ج.م.');
 
     var problem = validateDraft(d);
     if (problem) { box.classList.add('warn'); out.textContent = '—'; return; }
