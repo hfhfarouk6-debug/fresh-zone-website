@@ -4,7 +4,14 @@
 
   /* Current year in the footer, so it does not go stale in January. */
   var yearEl = document.getElementById('fzYear');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  /* Server year, so a device with a wrong clock cannot print a wrong
+     copyright year in the footer. */
+  if (yearEl) {
+    yearEl.textContent = (FZ.now ? FZ.now() : new Date()).getFullYear();
+    if (FZ.syncClock) {
+      FZ.syncClock().then(function () { yearEl.textContent = FZ.now().getFullYear(); });
+    }
+  }
 
   /* Real scroll reveal. The CSS animation it replaces had no observer at all,
      so every .reveal fired at page load - including the eight elements below

@@ -147,9 +147,11 @@
     btn.disabled = true; btn.textContent = 'بيتم الحفظ...';
     /* updated_at is written explicitly: no client ever wrote it before, so if
        the database has no trigger the "last updated" line silently showed the
-       row's creation date forever while prices changed daily. */
+       row's creation date forever while prices changed daily.
+       FZ.now(), not new Date(): the timestamp must be the real moment the price
+       changed, not what this particular device believes the time is. */
     sb.from('market_settings')
-      .update({ base_price: Number(val), updated_at: new Date().toISOString() })
+      .update({ base_price: Number(val), updated_at: FZ.now().toISOString() })
       .eq('id', 1)
       .then(function (res) {
         btn.disabled = false; btn.textContent = 'حفظ سعر اليوم';
