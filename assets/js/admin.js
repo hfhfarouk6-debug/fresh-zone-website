@@ -405,8 +405,11 @@
        to sit outside 1-3. */
     if (d.price !== null) return null;
     if (d.markup_type === 'percent') {
-      if (!(d.markup_value >= 1 && d.markup_value <= 3)) {
-        return 'معامل الضرب لازم يكون بين 1 و 3 (يعني 1.15 = زيادة 15%). لو عايز تضيف مبلغ ثابت، غيّر النوع.';
+      /* Ceiling was 3, which the highest-yield cut (بانيه) sat on exactly - so
+         any real price rise was rejected. 5 still catches the mistake this
+         guard exists for: a "10" typed meaning 10%. */
+      if (!(d.markup_value >= 1 && d.markup_value <= 5)) {
+        return 'معامل الضرب لازم يكون بين 1 و 5 (يعني 1.15 = زيادة 15%). لو عايز تضيف مبلغ ثابت، غيّر النوع.';
       }
     } else if (d.markup_value < 0 || d.markup_value > 200) {
       return 'المبلغ الثابت لازم يكون بين 0 و 200 جنيه.';
