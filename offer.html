@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صور العروض | Fresh Zone فريش زون</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F4EEE2">
+<link rel="icon" href="assets/icon-white.png" type="image/png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Tajawal',sans-serif; background:var(--cream); color:var(--ink);
+       -webkit-font-smoothing:antialiased; padding:24px 16px 80px;}
+  img{display:block; max-width:100%;}
+  button,input{font:inherit; color:inherit;}
+
+  .page{max-width:660px; margin:0 auto;}
+  .top{text-align:center; margin-bottom:20px;}
+  .top h1{font-size:26px; font-weight:900;}
+  .top p{font-size:15px; color:var(--ink-soft); margin-top:6px;}
+  .top a{color:var(--blue); font-weight:700;}
+
+  .controls{background:#fff; border:1px solid var(--line-on-cream); border-radius:12px;
+            padding:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;
+            margin-bottom:24px;}
+  .ctl{flex:1 1 130px;}
+  .ctl label{display:block; font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:6px;}
+  .ctl input{width:100%; padding:10px 12px; border:1px solid var(--line-on-cream);
+             border-radius:8px; background:var(--cream); font-weight:700;}
+  .btn{background:var(--blue); color:#fff; border:0; border-radius:9px; padding:12px 20px;
+       font-weight:800; cursor:pointer;}
+  .btn:disabled{opacity:.5; cursor:default;}
+  .btn.ghost{background:transparent; color:var(--blue); border:1px solid var(--blue);}
+
+  .status{text-align:center; font-size:14px; color:var(--ink-soft); margin-bottom:18px; min-height:20px;}
+
+  .item{margin-bottom:34px;}
+  .item-bar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .item-bar b{font-size:15px;}
+
+  /* The board is always 1080x1350 so the export is exact; only the wrapper is
+     scaled for preview, and the scale is removed for the split second of the
+     capture. Scaling the board itself makes html2canvas measure the wrong box. */
+  .frame{overflow:hidden; border-radius:10px; border:1px solid var(--line-on-cream);}
+  .scaler{transform-origin:top right;}
+
+  .board{width:1080px; height:1350px; display:flex; flex-direction:column; direction:rtl;
+    font-family:'Tajawal',sans-serif; color:var(--cream); background:#030C13;
+    background-image:
+      radial-gradient(880px 600px at 50% -10%, rgba(6,101,189,.40), rgba(6,101,189,0) 62%),
+      radial-gradient(700px 480px at 50% 110%, rgba(6,101,189,.18), rgba(6,101,189,0) 60%);}
+  .b-head{padding:42px 62px 0; text-align:center;}
+  .b-pill{display:inline-block; background:var(--gold); color:#030C13; font-weight:900;
+          font-size:24px; letter-spacing:1px; padding:10px 28px; border-radius:999px;}
+  .b-h1{font-size:86px; font-weight:900; line-height:1.04; margin-top:16px; letter-spacing:-1px;}
+  .b-h1 span{color:var(--gold);}
+  .b-loc{display:inline-block; margin-top:14px; border:1px solid rgba(244,238,226,.26);
+         border-radius:8px; padding:9px 22px; font-size:23px; font-weight:700;
+         color:rgba(244,238,226,.8);}
+  .b-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:26px 56px 0;
+          flex-grow:1; align-content:center;}
+  .b-card{background:#0A1622; border:1px solid rgba(244,238,226,.10); border-radius:16px;
+          overflow:hidden;}
+  .b-card img{width:100%; height:178px; object-fit:cover;}
+  .b-body{padding:13px 14px 14px; text-align:center;}
+  .b-name{font-size:29px; font-weight:900; line-height:1.1;}
+  .b-unit{font-size:20px; font-weight:600; color:rgba(244,238,226,.55); margin-top:3px;}
+  .b-boxes{margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .b-box{border-radius:9px; height:74px; display:flex; flex-direction:column;
+         align-items:center; justify-content:center;}
+  /* Fixed heights + matching line-height instead of baseline alignment: the
+     only price layout html2canvas reproduces faithfully. */
+  .b-box .lbl{font-size:17px; line-height:22px; height:22px; font-weight:700;}
+  .b-box .val{font-size:34px; line-height:38px; height:38px; font-weight:900;}
+  .b-old{background:rgba(244,238,226,.07); border:1px solid rgba(244,238,226,.14);}
+  .b-old .lbl{color:rgba(244,238,226,.55);}
+  .b-old .val{color:rgba(244,238,226,.5); position:relative; display:inline-block;}
+  .b-old .val::after{content:""; position:absolute; inset-inline:-6px; top:17px; height:3px;
+                     background:#c0392b; border-radius:2px;}
+  .b-new{background:var(--cream);}
+  .b-new .lbl{color:var(--blue);}
+  .b-new .val{color:#030C13;}
+  .b-foot{padding:0 56px;}
+  .b-note{font-size:23px; line-height:30px; font-weight:600; color:rgba(244,238,226,.6);
+          text-align:center;}
+  .b-cta{margin-top:13px; display:flex; align-items:center; justify-content:center; gap:16px;
+         background:var(--blue); border-radius:14px; height:86px;}
+  .b-cta .lbl{font-size:27px; line-height:34px; font-weight:800; color:rgba(255,255,255,.92);}
+  .b-cta .num{font-size:44px; line-height:52px; font-weight:900; letter-spacing:1px;
+              color:#fff; direction:ltr;}
+  .b-logo{height:126px; flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="top">
+    <h1>صور عروض واتساب وفيسبوك</h1>
+    <p>كل صورة فيها ٤ أصناف بأسعار النهاردة. <a href="admin.html">لوحة التحكم</a> · <a href="pricelist.html">قائمة الأسعار</a></p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="kilos">الكمية (كيلو)</label>
+      <input type="number" id="kilos" value="5" min="1" step="1">
+    </div>
+    <div class="ctl">
+      <label for="discount">الخصم (جنيه)</label>
+      <input type="number" id="discount" value="15" min="0" step="1">
+    </div>
+    <button class="btn" type="button" id="applyBtn">حدّث الصور</button>
+  </div>
+
+  <div class="status" id="status">بيتم التحميل...</div>
+  <div id="boards"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/pricing.js"></script>
+<script src="assets/js/offer.js"></script>
+</body>
+</html>
