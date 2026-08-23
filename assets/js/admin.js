@@ -90,8 +90,13 @@
   }
   function reportError(error, fallback) {
     if (isAuthError(error)) {
+      /* Straight back to the login screen. Leaving the dashboard up with an
+         empty table read as "my products were deleted" rather than "you are
+         logged out", which is a frightening thing to show someone about their
+         own data. */
       sessionWarn.classList.add('show');
       toast('الجلسة انتهت، سجّل دخولك تاني', true);
+      showLogin();
     } else {
       toast(fallback, true);
     }
@@ -653,6 +658,26 @@
       toast('اتشال');
       loadProducts();
     });
+  });
+
+  /* A device clock that is hours out is the quiet cause of "my session keeps
+     expiring": the auth client schedules its token refresh against LOCAL time,
+     so a clock running behind makes it believe a token is still fresh long
+     after the server has stopped accepting it - no refresh is attempted, and
+     every save fails. Worth saying out loud, because nothing else on screen
+     would ever point at the clock. */
+  FZ.syncClock().then(function () {
+    var skewMin = Math.round((FZ.now().getTime() - Date.now()) / 60000);
+    if (Math.abs(skewMin) < 5) return;
+    var hours = Math.round(Math.abs(skewMin) / 60 * 10) / 10;
+    var amount = Math.abs(skewMin) < 60 ? (Math.abs(skewMin) + ' دقيقة') : (hours + ' ساعة');
+    var dir = skewMin > 0 ? 'متأخرة' : 'مقدّمة';
+    var el = document.createElement('div');
+    el.className = 'session-warn show';
+    el.setAttribute('role', 'alert');
+    el.textContent = 'ساعة جهازك ' + dir + ' حوالي ' + amount +
+      ' — ده بيقطع الجلسة كل شوية. اظبط الوقت التلقائي في إعدادات الجهاز.';
+    document.body.insertBefore(el, document.body.firstChild);
   });
 
   checkSession();
