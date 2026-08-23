@@ -644,7 +644,8 @@ window.FZ = window.FZ || {};
           console.warn('Fresh Zone: html2canvas failed to load; server export only.', e);
         });
 
-    var sb = FZ.client();
+    /* Read-only page: never carry the dashboard login (see FZ.publicClient). */
+    var sb = FZ.publicClient ? FZ.publicClient() : FZ.client();
     var dataReady;
 
     if (!sb) {

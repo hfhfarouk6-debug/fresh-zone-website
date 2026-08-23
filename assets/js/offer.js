@@ -149,7 +149,8 @@
   applyBtn.addEventListener('click', render);
   window.addEventListener('resize', fitScalers);
 
-  var sb = FZ.client();
+  /* Read-only page: never carry the dashboard login (see FZ.publicClient). */
+  var sb = FZ.publicClient ? FZ.publicClient() : FZ.client();
   if (!sb) { say('تعذّر الاتصال بالسيرفر.'); return; }
 
   Promise.all([
