@@ -579,7 +579,12 @@ window.FZ = window.FZ || {};
 
     var listEl = poster.querySelector('#fzPlist');
     var dateEl = poster.querySelector('#fzDateRow');
+    /* Painted twice on purpose: once now from the device clock so the poster
+       is never blank, then again once the server's date lands. */
     if (dateEl) dateEl.textContent = AR.pricesOf + FZ.formatDate();
+    var clockReady = FZ.syncClock().then(function () {
+      if (dateEl) dateEl.textContent = AR.pricesOf + FZ.formatDate();
+    });
 
     if (EXPORT_MODE) {
       stripToPoster(poster);
@@ -669,7 +674,9 @@ window.FZ = window.FZ || {};
       });
     }
 
-    Promise.all([dataReady, fontsReady(), libReady])
+    /* clockReady joins the gate: without it the server screenshot could be
+       taken between the two date paints and capture the wrong day. */
+    Promise.all([dataReady, fontsReady(), libReady, clockReady])
       .then(function () {
         /* Raising the flag any earlier lets the server screenshot land
            mid-reflow. */

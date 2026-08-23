@@ -36,13 +36,53 @@ FZ.formatPrice = function (n) {
   return r === null ? null : r.toLocaleString('en-US');
 };
 
+/* ---- the clock ----------------------------------------------------------
+   The poster date used to come from the visitor's device. A device whose
+   clock is wrong - and they are, more often than you would guess - then
+   published a price list dated the wrong day, which reads as carelessness
+   about the prices themselves.
+
+   So the date comes from the server instead: one HEAD request, whose `Date`
+   response header is authoritative, and everything is then formatted in Cairo
+   time regardless of where the device thinks it is. The device clock survives
+   only as the fallback, because a wrong date beats no date. */
+FZ.TIMEZONE = 'Africa/Cairo';
+
+/* File-scope, not module-scope: pricing.js is a plain script, so these are
+   prefixed to stay clear of anything else on the page. */
+var fzClockSkew = null;  /* serverMillis - deviceMillis, once known */
+var fzClockSync = null;  /* memoised in-flight promise */
+
+FZ.syncClock = function () {
+  if (fzClockSync) return fzClockSync;
+  if (typeof fetch !== 'function') { fzClockSync = Promise.resolve(); return fzClockSync; }
+  fzClockSync = fetch('/robots.txt?t=' + Date.now(), { method: 'HEAD', cache: 'no-store' })
+    .then(function (res) {
+      var header = res.headers.get('date');
+      if (!header) return;
+      var serverMs = Date.parse(header);
+      /* Date.parse returns NaN on anything unexpected; never let that poison
+         every date on the page. */
+      if (!isFinite(serverMs)) return;
+      fzClockSkew = serverMs - Date.now();
+    })
+    .catch(function () { /* offline, blocked, CORS - fall back to the device */ });
+  return fzClockSync;
+};
+
+/* Uses the device clock only to measure ELAPSED time since the sync, which is
+   correct even when its absolute reading is hours out. */
+FZ.now = function () {
+  return new Date(Date.now() + (fzClockSkew || 0));
+};
+
 /* Arabic month/weekday names with Latin digits, so the date matches the
    numeral system used by the prices. */
 FZ.formatDate = function (d) {
-  d = d || new Date();
+  d = d || FZ.now();
   try {
     return d.toLocaleDateString('ar-EG-u-nu-latn', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: FZ.TIMEZONE
     });
   } catch (e) {
     return d.toLocaleDateString('ar-EG', {
@@ -64,9 +104,14 @@ FZ.formatDateTime = function (d) {
 /* Local date, not UTC. toISOString() was stamping downloads with yesterday
    between 00:00 and 03:00 Cairo time. */
 FZ.dateSlug = function (d) {
-  d = d || new Date();
-  var pad = function (n) { return String(n).padStart(2, '0'); };
-  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  d = d || FZ.now();
+  try {
+    /* en-CA is the one common locale that formats as YYYY-MM-DD. */
+    return d.toLocaleDateString('en-CA', { timeZone: FZ.TIMEZONE });
+  } catch (e) {
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
 };
 
 /* Escapes & FIRST, which is what makes it safe inside an HTML attribute -
