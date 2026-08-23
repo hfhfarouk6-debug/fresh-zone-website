@@ -56,9 +56,12 @@
       radial-gradient(880px 600px at 50% -10%, rgba(6,101,189,.40), rgba(6,101,189,0) 62%),
       radial-gradient(700px 480px at 50% 110%, rgba(6,101,189,.18), rgba(6,101,189,0) 60%);}
   .b-head{padding:42px 62px 0; text-align:center;}
+  /* No letter-spacing on Arabic: html2canvas positions each glyph itself when
+     spacing is set, which breaks the cursive joining and renders the word as
+     detached, mis-ordered letters. Latin runs are unaffected. */
   .b-pill{display:inline-block; background:var(--gold); color:#030C13; font-weight:900;
-          font-size:24px; letter-spacing:1px; padding:10px 28px; border-radius:999px;}
-  .b-h1{font-size:86px; font-weight:900; line-height:1.04; margin-top:16px; letter-spacing:-1px;}
+          font-size:24px; padding:10px 28px; border-radius:999px;}
+  .b-h1{font-size:86px; font-weight:900; line-height:1.1; margin-top:16px;}
   .b-h1 span{color:var(--gold);}
   .b-loc{display:inline-block; margin-top:14px; border:1px solid rgba(244,238,226,.26);
          border-radius:8px; padding:9px 22px; font-size:23px; font-weight:700;
@@ -80,9 +83,10 @@
   .b-box .val{font-size:34px; line-height:38px; height:38px; font-weight:900;}
   .b-old{background:rgba(244,238,226,.07); border:1px solid rgba(244,238,226,.14);}
   .b-old .lbl{color:rgba(244,238,226,.55);}
-  .b-old .val{color:rgba(244,238,226,.5); position:relative; display:inline-block;}
-  .b-old .val::after{content:""; position:absolute; inset-inline:-6px; top:17px; height:3px;
-                     background:#c0392b; border-radius:2px;}
+  /* text-decoration, not a positioned pseudo-element: html2canvas places an
+     ::after bar by its own box maths and it landed under the digits. */
+  .b-old .val{color:rgba(244,238,226,.5); text-decoration:line-through;
+              text-decoration-color:#c0392b; text-decoration-thickness:3px;}
   .b-new{background:var(--cream);}
   .b-new .lbl{color:var(--blue);}
   .b-new .val{color:#030C13;}
