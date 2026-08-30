@@ -661,14 +661,14 @@
           '<div style="width:64px; height:64px; border-radius:50%; background:#030C13; display:flex; align-items:center; justify-content:center;">' +
             '<img src="assets/icon-white.png" alt="" width="34" height="34" crossorigin="anonymous">' +
           '</div>' +
-          '<div style="margin-top:10px; font-size:11px; font-weight:700; letter-spacing:4px; color:#0665BD;">WHOLESALE · تجار</div>' +
+          '<div style="margin-top:10px; font-size:11px; font-weight:700; color:#0665BD;"><span style="letter-spacing:4px;">WHOLESALE</span> · <span>تجار</span></div>' +
           '<div style="margin-top:4px; font-size:38px; font-weight:900; color:#030C13; line-height:1;">FRESH<span style="color:#0665BD;">ZONE</span></div>' +
           '<div style="margin-top:5px; font-size:17px; font-weight:800; color:#030C13;">قائمة أسعار الجملة — فريش زون</div>' +
           '<div style="margin-top:4px; font-size:12px; font-weight:600; color:rgba(28,23,16,.6);">' + FZ.escapeHtml(FZ.formatDate()) + '</div>' +
         '</div>' +
         '<div style="margin-top:22px; display:flex; flex-direction:column; gap:0;">' + rowsHtml + '</div>' +
         '<div style="margin-top:24px; background:#030C13; border-radius:14px; padding:16px 20px; text-align:center;">' +
-          '<div style="font-size:11px; font-weight:700; letter-spacing:2px; color:#E6B25A;">للتواصل والطلب</div>' +
+          '<div style="font-size:11px; font-weight:700; color:#E6B25A;">للتواصل والطلب</div>' +
           '<div style="margin-top:6px; font-size:26px; font-weight:900; color:#F4EEE2; direction:ltr;">' + FZ.escapeHtml(FZ.PHONE_PRIMARY) + '</div>' +
           '<div style="margin-top:6px; font-size:11px; font-weight:600; color:rgba(244,238,226,.7);">جاردينيا سيتي – مدينة نصر · القاهرة</div>' +
         '</div>' +
