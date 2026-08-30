@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة التحكم | Fresh Zone</title>
+<title>قائمة التجار | Fresh Zone</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="assets/icon-white.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- 900 is requested because three headings use it; without it the browser
-     synthesised a faux-bold. -->
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/admin.css">
@@ -21,7 +19,7 @@
   <div class="login-box">
     <img src="assets/icon-white.png" alt="Fresh Zone" width="42" height="42">
     <h1>لوحة تحكم فريش زون</h1>
-    <p class="hint-top">سجّل دخولك عشان تدير المنتجات والأسعار</p>
+    <p class="hint-top">سجّل دخولك عشان تدير قائمة التجار</p>
     <form id="loginForm">
       <div class="field">
         <label for="loginEmail">الإيميل</label>
@@ -50,11 +48,11 @@
         <span>فريش زون</span>
       </div>
       <nav class="sidebar-nav" aria-label="أقسام اللوحة">
-        <a class="nav-item" href="admin.html" aria-current="page">
+        <a class="nav-item" href="admin.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
           المنتجات والأسعار
         </a>
-        <a class="nav-item" href="admin-merchants.html">
+        <a class="nav-item" href="admin-merchants.html" aria-current="page">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
           قائمة التجار
         </a>
@@ -83,8 +81,8 @@
 
       <main>
         <div class="page-head">
-          <h1>المنتجات والأسعار</h1>
-          <p>تحكّم في سعر البورصة اليومي وأصناف الموقع من هنا.</p>
+          <h1>قائمة التجار</h1>
+          <p>قائمة أسعار جملة منفصلة تمامًا عن الموقع — التجار مش بيشوفوها، وإنت اللي بتنزّلها كصورة وتبعتها لهم بنفسك.</p>
         </div>
 
         <div class="stats-row">
@@ -96,17 +94,12 @@
           <div class="stat-card">
             <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
             <div class="stat-val" id="statAvailable">—</div>
-            <div class="stat-label">متاح على الموقع</div>
+            <div class="stat-label">ظاهر في القائمة</div>
           </div>
           <div class="stat-card">
             <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg></div>
             <div class="stat-val" id="statBase">—</div>
             <div class="stat-label">سعر البورصة (جنيه)</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-            <div class="stat-val is-text" id="statUpdated">—</div>
-            <div class="stat-label">آخر تحديث للبورصة</div>
           </div>
         </div>
 
@@ -114,32 +107,34 @@
           <div class="market-info">
             <div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg></div>
             <div>
-              <label class="market-label" for="marketPrice">سعر البورصة اليوم (جنيه/كجم)</label>
+              <label class="market-label">سعر البورصة اليوم (جنيه/كجم)</label>
               <div class="market-updated" id="marketUpdated"></div>
             </div>
           </div>
-          <div class="market-input-row">
-            <input type="number" step="0.01" min="0" id="marketPrice" placeholder="مثال: 62.5">
-            <button class="btn btn-market" type="button" id="saveMarketBtn">حفظ سعر اليوم</button>
-          </div>
-          <p class="market-note">
-            السعر النهائي لكل صنف = <b>(سعر البورصة + 5)</b> وبعدين
-            <b>نضيف</b> عليها مبلغ الصنف، أو <b>نضربها</b> في معامل الصنف — حسب النوع اللي مختاره.
-            وبعدين السعر بيتقرّب لأقرب جنيه صحيح.
-            لو حاطط للصنف <b>سعر يدوي</b>، ده بيتجاهل الحسبة كلها.
+          <p class="market-note" style="margin-top:var(--s-3);">
+            سعر البورصة واحد مشترك بين قائمة العملاء وقائمة التجار — غيّره من صفحة
+            <b>«المنتجات والأسعار»</b> وهيتحدّث هنا تلقائي.
+            السعر النهائي لكل صنف = <b>(سعر البورصة + 5)</b> وبعدين <b>نضيف</b> أو <b>نضرب</b> معامل الصنف، حسب النوع.
+            لو حاطط <b>سعر يدوي</b>، ده بيتجاهل الحسبة كلها.
           </p>
         </div>
 
         <div class="toolbar">
-          <h2>كل الأصناف</h2>
-          <button class="btn btn-add" type="button" id="addBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
-            إضافة صنف
-          </button>
+          <h2>أصناف التجار</h2>
+          <div style="display:flex; gap:var(--s-3);">
+            <button class="btn btn-secondary" type="button" id="downloadBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 3v13m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+              تحميل صورة القائمة
+            </button>
+            <button class="btn btn-add" type="button" id="addBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+              إضافة صنف
+            </button>
+          </div>
         </div>
         <div class="table-wrap">
           <table>
-            <caption class="sr-only">قائمة أصناف فريش زون وأسعارها</caption>
+            <caption class="sr-only">قائمة أصناف التجار وأسعارها</caption>
             <thead>
               <tr>
                 <th scope="col">الصورة</th>
@@ -155,7 +150,7 @@
           </table>
           <div class="empty-state" id="emptyState" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-            <div>مفيش أصناف لسه. دوس "إضافة صنف" تبدأ.</div>
+            <div>مفيش أصناف لسه في قائمة التجار. دوس "إضافة صنف" تبدأ.</div>
           </div>
         </div>
       </main>
@@ -163,7 +158,7 @@
   </div>
 </div>
 
-<!-- ===== MODAL: add/edit product ===== -->
+<!-- ===== MODAL: add/edit merchant product ===== -->
 <div class="overlay" id="modalOverlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <h3 id="modalTitle">إضافة صنف</h3>
@@ -198,10 +193,8 @@
         <input type="number" step="0.01" min="0" id="price" placeholder="سيبه فاضي عشان يتحسب من البورصة">
       </div>
 
-      <!-- the number the customer will actually see, recomputed live. worth
-           more to a non-technical operator than any amount of validation. -->
       <div class="preview-line" id="pricePreview">
-        <span>السعر اللي هيظهر للعميل</span><b id="pricePreviewVal">—</b>
+        <span>السعر اللي هيظهر في صورة القائمة</span><b id="pricePreviewVal">—</b>
       </div>
 
       <div class="row2">
@@ -225,7 +218,7 @@
       <div class="hint" id="uploadStatus" role="status" aria-live="polite">JPG أو PNG أو WEBP، حد أقصى 5 ميجا</div>
 
       <div class="switch-row">
-        <label for="isAvailable">متاح على الموقع</label>
+        <label for="isAvailable">ظاهر في القائمة</label>
         <span class="switch">
           <input type="checkbox" id="isAvailable" checked>
           <span class="slider" aria-hidden="true"></span>
@@ -257,7 +250,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/pricing.js"></script>
-<script src="assets/js/admin.js"></script>
+<script src="assets/js/admin-merchants.js"></script>
 
 </body>
 </html>
