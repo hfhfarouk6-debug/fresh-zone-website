@@ -217,6 +217,26 @@
       </div>
       <div class="hint" id="uploadStatus" role="status" aria-live="polite">JPG أو PNG أو WEBP، حد أقصى 5 ميجا</div>
 
+      <!-- Photo framing. Hidden until there is an image to frame. The preview
+           circle is the poster's own frame shape, driven by the same
+           FZ.applyCover the poster uses, so what is shown here is what the
+           downloaded image will contain - no download-to-check loop. -->
+      <div class="field" id="zoomField" style="display:none;">
+        <label for="photoZoom">تكبير الصورة جوه الإطار</label>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div id="zoomPreviewFrame" style="position:relative; width:84px; height:84px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2.5px solid #E6B25A; background:#0c1c2b;">
+            <img id="zoomPreviewImg" src="" alt="">
+          </div>
+          <div style="flex:1; min-width:0;">
+            <input type="range" id="photoZoom" min="1" max="3" step="0.05" value="1" style="width:100%;">
+            <div class="hint" style="margin-top:6px;">
+              <b id="photoZoomVal">1.00×</b> — معاينة حقيقية زي ما الصنف هيطلع في صورة القائمة بالظبط.
+              على ١ الصورة بتملأ الإطار من غير فراغ؛ زوّد لو عاوز تقرّب على المنتج أكتر.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="switch-row">
         <label for="isAvailable">ظاهر في القائمة</label>
         <span class="switch">
