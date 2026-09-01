@@ -39,9 +39,18 @@ const SUPA_URL = 'https://gnlvytjcryizrkckpgtx.supabase.co';
 const SUPA_KEY = 'sb_publishable_6Dgu7fTMdr1mqrUsHiiEQQ_GXZOXi91';
 
 /* Matches CAPTURE_WIDTH / CAPTURE_SCALE in assets/js/poster.js: the poster's
-   one true layout width, photographed at 3x -> a 1380px PNG. */
+   one true layout width, photographed at 6x -> a 2760px PNG.
+
+   6 is the ceiling that still pays. The poster's photo box is 35px and the
+   lowest-resolution product photo in the catalogue is 420x210, so its short
+   side maps to 35px at 210/35 = 6x. Beyond that the weakest photos are being
+   upscaled: a heavier PNG and a slower render for no extra detail.
+
+   Raising this raises render time and peak memory on the Lambda (2048MB /
+   60s). If it ever runs long, poster.js falls back to rendering in the
+   browser, so the button degrades rather than breaks - but lower this first. */
 const WIDTH = 460;
-const SCALE = 3;
+const SCALE = 6;
 
 /* The page is data-driven (Supabase) and pulls product photos and five font
    weights, so first paint is not the finish line. */
