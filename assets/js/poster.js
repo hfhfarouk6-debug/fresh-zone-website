@@ -21,7 +21,13 @@ window.FZ = window.FZ || {};
   var PHOTO_BOX = 35;
 
   var CAPTURE_WIDTH = 460;   /* the poster's one true layout width */
-  var CAPTURE_SCALE = 3;     /* -> 1380px PNG, comfortable for WhatsApp */
+  /* -> a 2760px PNG. The ceiling that still pays: PHOTO_BOX is 35px and the
+     lowest-resolution product photo is 420x210, so its short side maps to 35px
+     at 210/35 = 6x. Past 6x that photo is upscaled - more bytes, no more
+     detail. Text stays vector and keeps sharpening, hence 6 and not 3.
+     MUST stay in sync with SCALE in api/poster.mjs, or the server path and
+     this fallback path hand back differently-sized PNGs for the same poster. */
+  var CAPTURE_SCALE = 6;
   var MAX_ZOOM = 1.35;
 
   /* Fills the 24px rounded corners with the same cream the poster sits on in
