@@ -415,6 +415,33 @@
     refreshPreview();
   });
 
+  /* 84px frame with a 2.5px border => 79px content box. Bigger than the
+     poster's 51px on purpose: same geometry, easier to judge by eye. */
+  var ZOOM_PREVIEW_BOX = 79;
+
+  /* Mirrors exactly what the poster will do with this photo. Hidden entirely
+     when there is no image, because a zoom control over an empty circle just
+     invites the question of what it does. */
+  function refreshZoomPreview() {
+    var url = $('imageUrl').value.trim();
+    var field = $('zoomField'), img = $('zoomPreviewImg');
+    var zoom = FZ.normalizePhotoZoom($('photoZoom').value);
+    $('photoZoomVal').textContent = zoom.toFixed(2) + '×';
+
+    if (!url) { field.style.display = 'none'; img.removeAttribute('src'); return; }
+    field.style.display = '';
+
+    function apply() { FZ.applyCover(img, ZOOM_PREVIEW_BOX, zoom); }
+    if (img.getAttribute('src') !== url) {
+      img.addEventListener('load', apply, { once: true });
+      img.setAttribute('src', url);
+    }
+    /* Already loaded (cached, or only the zoom moved): re-frame immediately. */
+    if (img.complete && img.naturalWidth) apply();
+  }
+
+  $('photoZoom').addEventListener('input', refreshZoomPreview);
+
   function openModal(p) {
     lastFocused = document.activeElement;
     $('modalTitle').textContent = p ? 'تعديل صنف' : 'إضافة صنف';
@@ -439,6 +466,9 @@
       preview.removeAttribute('src'); preview.style.display = 'none'; placeholder.style.display = 'flex';
     }
     previewBeforeUpload = { src: preview.getAttribute('src') || '', url: $('imageUrl').value };
+
+    $('photoZoom').value = p && p.photo_zoom != null ? FZ.normalizePhotoZoom(p.photo_zoom) : 1;
+    refreshZoomPreview();
 
     refreshPreview();
     overlay.classList.add('show');
@@ -491,6 +521,7 @@
         placeholder.style.display = 'flex';
       }
       $('imageUrl').value = previewBeforeUpload ? previewBeforeUpload.url : '';
+      refreshZoomPreview();   /* rolled back to the previous photo, or to none */
       toast(msg, true);
     }
 
@@ -516,6 +547,7 @@
       if (res.error) { fail('حصل خطأ في الرفع، جرب تاني'); console.error(res.error); return; }
       var pub = sb.storage.from('product-images').getPublicUrl('merchant-' + uid + '.' + ext);
       $('imageUrl').value = pub.data.publicUrl;
+      refreshZoomPreview();   /* a new photo needs re-framing at the current zoom */
       status.textContent = 'اترفعت بنجاح';
       status.className = 'hint ok';
     }).catch(function (err) {
@@ -548,6 +580,7 @@
       markup_value: draft.markup_value,
       sort_order: Number($('sortOrder').value) || 0,
       image_url: $('imageUrl').value.trim() || null,
+      photo_zoom: FZ.normalizePhotoZoom($('photoZoom').value),
       is_available: $('isAvailable').checked
     };
 
@@ -625,12 +658,16 @@
   function posterRowHtml(p) {
     var priceStr = FZ.formatPrice(FZ.computeFinalPrice(p, currentBasePrice));
     var priceLabel = priceStr === null ? '—' : priceStr;
+    /* data-fzphoto marks the photos that get cover geometry once loaded; the
+       logo and icons in the same poster must NOT be touched. The frame needs
+       position:relative because that geometry is absolutely positioned. */
     var photo = p.image_url
-      ? '<img src="' + FZ.escapeHtml(p.image_url) + '" alt="" crossorigin="anonymous">'
+      ? '<img src="' + FZ.escapeHtml(p.image_url) + '" alt="" crossorigin="anonymous"' +
+        ' data-fzphoto="1" data-zoom="' + FZ.normalizePhotoZoom(p.photo_zoom) + '">'
       : '';
     return (
       '<div style="display:flex; align-items:center; gap:14px; padding:11px 16px; background:#FFFDF9; border:1px solid rgba(28,23,16,.08); border-radius:14px;">' +
-        '<div style="width:56px; height:56px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2.5px solid #E6B25A; background:#0c1c2b;">' + photo + '</div>' +
+        '<div style="position:relative; width:56px; height:56px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2.5px solid #E6B25A; background:#0c1c2b;">' + photo + '</div>' +
         '<div style="flex:1; min-width:0;">' +
           '<div style="font-size:16px; font-weight:800; color:#030C13; line-height:1.2;">' + FZ.escapeHtml(p.name_ar) + '</div>' +
           (p.name_en ? '<div style="margin-top:2px; font-size:10px; font-weight:700; color:#0665BD; direction:ltr; text-align:right; letter-spacing:.3px; text-transform:uppercase;">' + FZ.escapeHtml(p.name_en) + '</div>' : '') +
@@ -679,12 +716,25 @@
     return host.firstElementChild;
   }
 
+  /* The product photo frame is 56px border-box with a 2.5px gold border, so
+     the content box the photo must cover is 51px. Kept as a named constant
+     because getting it from the DOM would read the border-box width and
+     silently under-fill every photo by 5px. */
+  var POSTER_PHOTO_BOX = 51;
+
+  /* Cover geometry can only be computed once naturalWidth is known, which is
+     exactly what this function already waits for - so it is applied here
+     rather than in a second pass that would have to wait all over again. */
+  function frameIfPhoto(im) {
+    if (im.dataset.fzphoto === '1') FZ.applyCover(im, POSTER_PHOTO_BOX, im.dataset.zoom);
+  }
+
   function awaitImages(node) {
     var imgs = Array.prototype.slice.call(node.querySelectorAll('img'));
     return Promise.all(imgs.map(function (im) {
-      if (im.complete && im.naturalWidth) return Promise.resolve();
+      if (im.complete && im.naturalWidth) { frameIfPhoto(im); return Promise.resolve(); }
       return new Promise(function (r) {
-        im.addEventListener('load', r, { once: true });
+        im.addEventListener('load', function () { frameIfPhoto(im); r(); }, { once: true });
         im.addEventListener('error', r, { once: true });
         setTimeout(r, 8000);
       });

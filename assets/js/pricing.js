@@ -36,6 +36,65 @@ FZ.formatPrice = function (n) {
   return r === null ? null : r.toLocaleString('en-US');
 };
 
+/* ---- product photo framing ----------------------------------------------
+   The ONE definition of how a product photo fills its frame, for the same
+   reason the price formula lives here: the customer poster and the merchant
+   poster each used to decide this for themselves, and they disagreed.
+
+   Why explicit pixel geometry instead of `object-fit:cover`, which does this
+   in one CSS line: html2canvas rasterises both posters and does not implement
+   object-fit. A CSS-only fix looks perfect on screen and still exports a
+   letterboxed or half-cropped photo - the exact bug this replaces.
+
+   The two failures it fixes:
+     - merchant poster: the <img> had no sizing at all, so the site-wide
+       `img{max-width:100%}` sized it to the frame's WIDTH with a free
+       height - landscape photos sat in a band of background, portrait ones
+       overflowed and lost their bottom half.
+     - customer poster: geometry was computed correctly and then clamped back
+       to the frame width by that same `max-width:100%`, while the centering
+       offset stayed sized for the un-clamped width - leaving a bare strip.
+
+   Hence maxWidth/maxHeight:'none' below. Without those two lines the
+   arithmetic is right and the result is still wrong. */
+FZ.PHOTO_ZOOM_MIN = 1;
+FZ.PHOTO_ZOOM_MAX = 3;
+
+FZ.normalizePhotoZoom = function (z) {
+  var n = Number(z);
+  if (!isFinite(n) || n < FZ.PHOTO_ZOOM_MIN) return FZ.PHOTO_ZOOM_MIN;
+  return Math.min(n, FZ.PHOTO_ZOOM_MAX);
+};
+
+/* Geometry only, so it can be unit-checked without a DOM. `box` is the frame's
+   CONTENT box in px (border-box frames must subtract their own borders). */
+FZ.coverGeometry = function (naturalW, naturalH, box, zoom) {
+  var nw = Number(naturalW), nh = Number(naturalH);
+  if (!nw || !nh || !isFinite(nw) || !isFinite(nh)) return null;
+  var s = Math.max(box / nw, box / nh) * FZ.normalizePhotoZoom(zoom);
+  var w = Math.round(nw * s * 100) / 100;
+  var h = Math.round(nh * s * 100) / 100;
+  /* Centred overflow: equal amounts are cropped from opposite edges. */
+  return { width: w, height: h, left: (box - w) / 2, top: (box - h) / 2 };
+};
+
+FZ.applyCover = function (img, box, zoom) {
+  if (!img) return false;
+  var g = FZ.coverGeometry(img.naturalWidth, img.naturalHeight, box, zoom);
+  if (!g) return false;
+  img.style.position = 'absolute';
+  img.style.maxWidth = 'none';    /* defeats the site-wide img{max-width:100%} */
+  img.style.maxHeight = 'none';
+  img.style.width = g.width + 'px';
+  img.style.height = g.height + 'px';
+  img.style.left = g.left + 'px';
+  img.style.top = g.top + 'px';
+  /* 'fill' not 'cover': the box IS the image's aspect ratio already, so fill
+     is a no-op that html2canvas understands, while cover is not. */
+  img.style.objectFit = 'fill';
+  return true;
+};
+
 /* ---- the clock ----------------------------------------------------------
    The poster date used to come from the visitor's device. A device whose
    clock is wrong - and they are, more often than you would guess - then

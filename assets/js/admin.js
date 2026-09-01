@@ -469,6 +469,33 @@
     refreshPreview();
   });
 
+  /* 84px frame with a 1.5px border => 81px content box. Bigger than the
+     poster's 35px on purpose: same geometry, easier to judge by eye. */
+  var ZOOM_PREVIEW_BOX = 81;
+
+  /* Mirrors exactly what the poster will do with this photo. Hidden entirely
+     when there is no image, because a zoom control over an empty tile just
+     invites the question of what it does. */
+  function refreshZoomPreview() {
+    var url = $('imageUrl').value.trim();
+    var field = $('zoomField'), img = $('zoomPreviewImg');
+    var zoom = FZ.normalizePhotoZoom($('photoZoom').value);
+    $('photoZoomVal').textContent = zoom.toFixed(2) + '×';
+
+    if (!url) { field.style.display = 'none'; img.removeAttribute('src'); return; }
+    field.style.display = '';
+
+    function apply() { FZ.applyCover(img, ZOOM_PREVIEW_BOX, zoom); }
+    if (img.getAttribute('src') !== url) {
+      img.addEventListener('load', apply, { once: true });
+      img.setAttribute('src', url);
+    }
+    /* Already loaded (cached, or only the zoom moved): re-frame immediately. */
+    if (img.complete && img.naturalWidth) apply();
+  }
+
+  $('photoZoom').addEventListener('input', refreshZoomPreview);
+
   function openModal(p) {
     lastFocused = document.activeElement;
     $('modalTitle').textContent = p ? 'تعديل صنف' : 'إضافة صنف';
@@ -493,6 +520,9 @@
       preview.removeAttribute('src'); preview.style.display = 'none'; placeholder.style.display = 'flex';
     }
     previewBeforeUpload = { src: preview.getAttribute('src') || '', url: $('imageUrl').value };
+
+    $('photoZoom').value = p && p.photo_zoom != null ? FZ.normalizePhotoZoom(p.photo_zoom) : 1;
+    refreshZoomPreview();
 
     refreshPreview();
     overlay.classList.add('show');
@@ -546,6 +576,7 @@
         placeholder.style.display = 'flex';
       }
       $('imageUrl').value = previewBeforeUpload ? previewBeforeUpload.url : '';
+      refreshZoomPreview();   /* rolled back to the previous photo, or to none */
       toast(msg, true);
     }
 
@@ -577,6 +608,7 @@
       if (res.error) { fail('حصل خطأ في الرفع، جرب تاني'); console.error(res.error); return; }
       var pub = sb.storage.from('product-images').getPublicUrl(uid + '.' + ext);
       $('imageUrl').value = pub.data.publicUrl;
+      refreshZoomPreview();   /* a new photo needs re-framing at the current zoom */
       status.textContent = 'اترفعت بنجاح';
       status.className = 'hint ok';
     }).catch(function (err) {
@@ -609,6 +641,7 @@
       markup_value: draft.markup_value,
       sort_order: Number($('sortOrder').value) || 0,
       image_url: $('imageUrl').value.trim() || null,
+      photo_zoom: FZ.normalizePhotoZoom($('photoZoom').value),
       is_available: $('isAvailable').checked
     };
 

@@ -212,7 +212,8 @@ window.FZ = window.FZ || {};
     return '<div class="prow">' +
       '<div class="ptop">' +
         '<div class="pphoto">' +
-          '<img src="' + FZ.escapeHtml(src) + '" alt="" crossorigin="anonymous" decoding="sync">' +
+          '<img src="' + FZ.escapeHtml(src) + '" alt="" crossorigin="anonymous" decoding="sync"' +
+          ' data-zoom="' + FZ.normalizePhotoZoom(p.photo_zoom) + '">' +
         '</div>' +
         '<div class="pinfo">' +
           '<div class="nm">' + nameAr + '</div>' +
@@ -228,18 +229,15 @@ window.FZ = window.FZ || {};
      stretches the whole bitmap into the element's layout box. So we make the
      layout box itself the correct cover rectangle and let the parent's
      overflow:hidden do the cropping. Stretch then IS the right crop, and the
-     export matches the screen exactly. */
+     export matches the screen exactly.
+
+     The arithmetic now lives in FZ.applyCover (pricing.js) so this poster and
+     the merchant poster cannot drift apart. It also sets max-width:none, which
+     this version was missing: `img{max-width:100%}` in pricelist.html clamped
+     the computed width back to the frame while the centring offset stayed
+     sized for the full width, leaving a bare strip beside wide photos. */
   function fitCover(img) {
-    var nw = img.naturalWidth, nh = img.naturalHeight;
-    if (!nw || !nh) return;
-    var s = Math.max(PHOTO_BOX / nw, PHOTO_BOX / nh);
-    var w = Math.round(nw * s * 100) / 100;
-    var h = Math.round(nh * s * 100) / 100;
-    img.style.width = w + 'px';
-    img.style.height = h + 'px';
-    img.style.left = ((PHOTO_BOX - w) / 2) + 'px';
-    img.style.top = ((PHOTO_BOX - h) / 2) + 'px';
-    img.style.objectFit = 'fill';
+    FZ.applyCover(img, PHOTO_BOX, img.dataset.zoom);
   }
 
   /* Resolves once every image has loaded or definitively failed.
